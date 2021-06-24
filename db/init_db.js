@@ -4,6 +4,7 @@ const {
   createProduct,
   createUser,
   getAllProducts,
+  getAllUsers,
 } = require("./index");
 ``;
 
@@ -37,7 +38,6 @@ async function buildTables() {
         password VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
         name VARCHAR(255) UNIQUE NOT NULL,
-        cart VARCHAR(255) [],
         admin BOOLEAN DEFAULT TRUE,
         UNIQUE(username, email, name)
       );
@@ -45,7 +45,7 @@ async function buildTables() {
         id SERIAL PRIMARY KEY,
         user_id INTEGER REFERENCES users(id),
         product_id INTEGER REFERENCES products(id),
-        UNIQUE("user_id","product_id")
+        UNIQUE(user_id,product_id)
       )
       `);
     console.log("Finished building tables...");
@@ -109,7 +109,7 @@ const createInitialUsers = async () => {
         password: "appleBoy24",
         email: "shyguy666@yahoo.com",
         name: "Erin Naples",
-        cart: ["product 2, product 3"],
+        cart: ["product 3"],
       },
       {
         username: "Jessica.Troy",
@@ -147,6 +147,10 @@ async function testDB() {
     console.log("Calling getAllProducts");
     const products = await getAllProducts();
     console.log("Result:", products);
+
+    console.log("Calling getAllUsers");
+    const users = await getAllUsers();
+    console.log("Result:", users);
 
     // console.log("Calling updateLink on links[0]");
     // const updateLinkResult = await updateLink(links[0].id, {

@@ -93,6 +93,7 @@ async function getUserById(user_id) {
         FROM users
         WHERE id=${user_id};
       `);
+    console.log(user, "UUUUUSER");
 
     if (!user) {
       throw {
@@ -103,14 +104,14 @@ async function getUserById(user_id) {
 
     const { rows: products } = await client.query(
       `
-      SELECT products.*
+      SELECT *
       FROM products
-      JOIN user_cart ON product.id=user_cart.product_id
-      WHERE user_cart.user_id=$1;
+      JOIN user_cart ON products.id=user_cart.product_id
+      WHERE user_cart.user.id=$1;
     `,
       [user_id]
     );
-    user.products = products;
+    user.cart = products;
     return user;
   } catch (error) {
     throw error;
@@ -118,37 +119,109 @@ async function getUserById(user_id) {
 }
 
 const createUser = async ({ username, password, email, name, cart = [] }) => {
-  console.log(cart);
   try {
     const {
       rows: [users],
     } = await client.query(
       `
             INSERT INTO users(
-              username, password, email, name, cart
+              username, password, email, name
               )
-            VALUES($1, $2, $3, $4, $5)
+            VALUES($1, $2, $3, $4)
             ON CONFLICT (username, email, name) DO NOTHING
             RETURNING *;
          `,
-      [username, password, email, name, cart]
+      [username, password, email, name]
     );
-    return users;
+    const userCart = await createUserProduct(cart);
+    const addedProduct = await addProductToUserCart(users.id, userCart);
+    console.log(addedProduct, "THIS IS THE ADDED PRODUCT");
+    return addedProduct;
   } catch (err) {
     console.error("Could not create users in db/index.js");
     throw err;
   }
 };
 
+async function getUserById(user_id) {
+  try {
+    const {
+      rows: [user],
+    } = await client.query(`
+        SELECT *
+        FROM users
+        WHERE id=${user_id};
+      `);
+
+    if (!user) {
+      throw {
+        name: "UserErrorNotFound",
+        message: "Could not find a user with that user_id",
+      };
+    }
+
+    const { rows: products } = await client.query(
+      `
+      SELECT products.*
+      FROM products
+      JOIN user_cart ON products.id=user_cart.product_id
+      WHERE user_cart.user_id=$1;
+    `,
+      [user_id]
+    );
+    user.cart = products;
+    return user;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getAllUsers() {
+  try {
+    const { rows: id } = await client.query(`
+    SELECT id 
+    FROM users;
+  `);
+
+    const users = await Promise.all(id.map((user) => getUserById(user.id)));
+    return users;
+  } catch (error) {
+    throw error;
+  }
+}
+
 // USER CART
+
+const createUserProduct = async (productList) => {
+  if (productList.length === 0) {
+    return;
+  }
+  const selectValues = productList
+    .map((_, index) => `$${index + 1}`)
+    .join(", ");
+  try {
+    const { rows } = await client.query(
+      `
+     SELECT * FROM products
+     WHERE name
+     IN (${selectValues});
+     `,
+      productList
+    );
+
+    return rows;
+  } catch (err) {
+    console.error("Could not create tags in index.js [createTag()]");
+  }
+};
 
 async function createUserCart(user_id, product_id) {
   try {
     await client.query(
       `
-      INSERT INTO user_cart("user_id", "product_id") 
+      INSERT INTO user_cart(user_id, product_id) 
       VALUES ($1, $2)
-      ON CONFLICT ("user_id", "product_id") DO NOTHING;
+      ON CONFLICT (user_id, product_id) DO NOTHING;
     `,
       [user_id, product_id]
     );
@@ -159,15 +232,32 @@ async function createUserCart(user_id, product_id) {
 
 async function addProductToUserCart(user_id, productList = []) {
   try {
-    const createUserCartPromises = productList.map((product) =>
-      createUserCart(user_id, product.id)
-    );
+    if (productList === undefined) {
+      return;
+    }
+    const createUserCartPromises = productList.map((product) => {
+      createUserCart(user_id, product.id);
+    });
 
     await Promise.all(createUserCartPromises);
 
-    return await getLinkById(linkId);
+    return await getUserById(user_id);
   } catch (error) {
     throw error;
+  }
+}
+
+async function getAllUserCarts() {
+  try {
+    const { rows } = await client.query(`
+      SELECT *
+      FROM user_cart;
+    `);
+
+    return rows;
+  } catch (err) {
+    console.err("Could not get all user carts!");
+    throw err;
   }
 }
 // export
@@ -175,7 +265,9 @@ module.exports = {
   client,
   createProduct,
   createUser,
-  createUserCart,
+  // createUserCart,
   getAllProducts,
+  getAllUsers,
+  getAllUserCarts,
   // db methods
 };
