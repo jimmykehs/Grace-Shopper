@@ -82,7 +82,7 @@ async function getAllProducts() {
   }
 }
 
-// USERS
+// USERS FUNCTIONS
 
 async function getUserById(user_id) {
   try {
@@ -115,6 +115,40 @@ async function getUserById(user_id) {
     return user;
   } catch (error) {
     throw error;
+  }
+}
+
+async function getUserByUsername(username) {
+  const {
+    rows: [user],
+  } = await client.query(
+    `
+    SELECT * FROM users
+    WHERE username = ($1);
+  `,
+    [username]
+  );
+
+  return user;
+}
+
+async function verifyUniqueUser(username, email, name) {
+  try {
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+    SELECT * FROM users
+    WHERE username = ($1)
+    OR email = ($2)
+    OR name = ($3);
+  `,
+      [username, email, name]
+    );
+
+    return user;
+  } catch (err) {
+    throw err;
   }
 }
 
@@ -269,5 +303,7 @@ module.exports = {
   getAllProducts,
   getAllUsers,
   getAllUserCarts,
+  getUserByUsername,
+  verifyUniqueUser,
   // db methods
 };
