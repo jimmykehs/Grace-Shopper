@@ -117,6 +117,40 @@ async function getUserById(user_id) {
   }
 }
 
+async function getUserByUsername(username) {
+  const {
+    rows: [user],
+  } = await client.query(
+    `
+    SELECT * FROM users
+    WHERE username = ($1);
+  `,
+    [username]
+  );
+
+  return user;
+}
+
+async function verifyUniqueUser(username, email, name) {
+  try {
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+    SELECT * FROM users
+    WHERE username = ($1)
+    OR email = ($2)
+    OR name = ($3);
+  `,
+      [username, email, name]
+    );
+
+    return user;
+  } catch (err) {
+    throw err;
+  }
+}
+
 const createUser = async ({ username, password, email, name, cart = [] }) => {
   console.log(cart);
   try {
@@ -177,5 +211,7 @@ module.exports = {
   createUser,
   createUserCart,
   getAllProducts,
+  getUserByUsername,
+  verifyUniqueUser,
   // db methods
 };
