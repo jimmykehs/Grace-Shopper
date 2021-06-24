@@ -8,8 +8,6 @@ const { createUser, getUserByUsername, verifyUniqueUser } = require("../../db");
 
 //Getting user for login
 usersRouter.post("/login", async (req, res, next) => {
-  console.log("Hey");
-
   const { username, password } = req.body;
   if (!username || !password) {
     next({
@@ -35,8 +33,8 @@ usersRouter.post("/login", async (req, res, next) => {
         });
       }
     }
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 });
 //Registering user
