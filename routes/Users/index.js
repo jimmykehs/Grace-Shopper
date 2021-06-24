@@ -32,6 +32,11 @@ usersRouter.post("/login", async (req, res, next) => {
           message: "Invalid credentials, please check username and password",
         });
       }
+    } else {
+      next({
+        name: "InvalidInfo",
+        message: "Invalid credentials, please check username and password",
+      });
     }
   } catch (err) {
     next(err);
