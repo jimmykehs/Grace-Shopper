@@ -42,6 +42,17 @@ const createProduct = async ({
   }
 };
 
+async function getAllProducts() {
+  try {
+    const { rows } = await client.query(`
+    SELECT * FROM products;`);
+    return rows;
+  } catch (err) {
+    console.error("Could not get all products in db/index.js @ getAllProducts");
+    throw error;
+  }
+}
+
 async function getProductById(product_id) {
   try {
     const {
@@ -68,14 +79,46 @@ async function getProductById(product_id) {
   }
 }
 
-async function getAllProducts() {
+async function patchProduct(product_id, fields = {}) {
+  const setString = Object.keys(fields)
+    .map((key, index) => `"${key}"=$${index + 1}`)
+    .join(", ");
   try {
-    const { rows } = await client.query(`
-    SELECT * FROM products;`);
-    return rows;
-  } catch (err) {
-    console.error("Could not get all products in db/index.js @ getAllProducts");
+    if (setString.length > 0) {
+      await client.query(
+        `
+        UPDATE products
+        SET ${setString}
+        WHERE id=${product_id}
+        RETURNING *;
+      `,
+        Object.values(fields)
+      );
+    }
+
+    return await getProductById(product_id);
+  } catch (error) {
+    console.error("Could not patch product in db/index.js @ patchProduct");
     throw error;
+  }
+}
+
+async function getProductByType(type) {
+  try {
+    const { rows } = await client.query(
+      `
+      SELECT *
+      FROM products
+      WHERE type=$1;
+    `,
+      [type]
+    );
+
+    return rows;
+  } catch (error) {
+    console.error(
+      "Could not get product by type in db/index.js @ getProductByType()"
+    );
   }
 }
 
@@ -183,6 +226,30 @@ async function verifyUniqueUser(username, email, name) {
   }
 }
 
+async function patchUser(user_id, fields = {}) {
+  const setString = Object.keys(fields)
+    .map((key, index) => `"${key}"=$${index + 1}`)
+    .join(", ");
+  try {
+    if (setString.length > 0) {
+      await client.query(
+        `
+        UPDATE users
+        SET ${setString}
+        WHERE id=${user_id}
+        RETURNING *;
+      `,
+        Object.values(fields)
+      );
+    }
+
+    return await getUserById(user_id);
+  } catch (error) {
+    console.error("Could not patch product in db/index.js @ patchProduct");
+    throw error;
+  }
+}
+
 // USER CART
 
 //createPostTag
@@ -271,12 +338,15 @@ async function getUserById(user_id) {
 module.exports = {
   client,
   createProduct,
-  createUser,
   getAllProducts,
+  getProductById,
+  getProductByType,
+  patchProduct,
+  createUser,
   getAllUsers,
-  // getAllUserCarts,
   getUserByUsername,
   verifyUniqueUser,
+  patchUser,
   addProductToCart,
   // db methods
 };
