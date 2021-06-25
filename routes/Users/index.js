@@ -4,7 +4,26 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 
-const { createUser, getUserByUsername, verifyUniqueUser } = require("../../db");
+const {
+  getAllUsers,
+  createUser,
+  getUserByUsername,
+  verifyUniqueUser,
+} = require("../../db");
+
+//Getting all users
+usersRouter.get("/", async (_, res, next) => {
+  try {
+    const users = await getAllUsers();
+
+    res.send({
+      message: "All Users Grabbed",
+      users,
+    });
+  } catch ({ name, message }) {
+    next({ name: "GetAllUsersError", message: "Unable to get all users!" });
+  }
+});
 
 //Getting user for login
 usersRouter.post("/login", async (req, res, next) => {
