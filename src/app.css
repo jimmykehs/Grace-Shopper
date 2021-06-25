@@ -1,0 +1,30 @@
+* {
+  box-sizing: border-box;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.link {
+  margin: 10px;
+  float: left;
+  color: white;
+}
+
+.header {
+  padding: 10px;
+  text-align: center;
+  color: white;
+}
+
+.userButtons {
+  float: right;
+  margin: 10px;
+  color: white;
+}
+
+.App {
+  background: url("simpsons.jpg");
+  width: 100vw;
+  height: 100vh;
+}
