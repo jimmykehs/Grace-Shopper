@@ -8,14 +8,7 @@ const client = new Client(DB_URL);
 
 // PRODUCTS
 
-const createProduct = async ({
-  name,
-  date_created,
-  description,
-  price,
-  image_url,
-  type,
-}) => {
+const createProduct = async ({ name, description, price, image_url, type }) => {
   try {
     const {
       rows: [products],
@@ -23,17 +16,16 @@ const createProduct = async ({
       `
             INSERT INTO products(
               name,
-              date_created,
               description,
               price,
               image_url,
               type
               )
-            VALUES($1, $2, $3, $4, $5, $6)
+            VALUES($1, $2, $3, $4, $5)
             ON CONFLICT (name) DO NOTHING
             RETURNING *;
          `,
-      [name, date_created, description, price, image_url, type]
+      [name, description, price, image_url, type]
     );
     return products;
   } catch (err) {
@@ -79,6 +71,16 @@ async function getProductById(product_id) {
   }
 }
 
+async function getAllProducts() {
+  try {
+    const { rows } = await client.query(`
+    SELECT * FROM products;`);
+    return rows;
+  } catch (err) {
+    console.error("Could not get all products in db/index.js @ getAllProducts");
+  }
+}
+
 async function patchProduct(product_id, fields = {}) {
   const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
@@ -99,6 +101,25 @@ async function patchProduct(product_id, fields = {}) {
     return await getProductById(product_id);
   } catch (error) {
     console.error("Could not patch product in db/index.js @ patchProduct");
+    throw error;
+  }
+}
+
+async function getProductByName(name) {
+  try {
+    const {
+      rows: [product],
+    } = await client.query(
+      `
+      SELECT * FROM products
+      WHERE name = ($1);
+    
+    
+    `,
+      [name]
+    );
+    return product;
+  } catch (error) {
     throw error;
   }
 }
@@ -344,6 +365,8 @@ module.exports = {
   patchProduct,
   createUser,
   getAllUsers,
+  getProductByName,
+  getUserById,
   getUserByUsername,
   verifyUniqueUser,
   patchUser,

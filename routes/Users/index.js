@@ -101,7 +101,7 @@ usersRouter.post("/register", async (req, res, next) => {
         {
           id: newUser.id,
           username: newUser.username,
-          isAdmin: user.admin,
+          isAdmin: newUser.admin,
         },
         process.env.JWT_SECRET
       );
