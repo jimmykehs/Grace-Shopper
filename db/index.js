@@ -186,26 +186,45 @@ async function getUserById(user_id) {
   try {
     const {
       rows: [user],
-    } = await client.query(`
-        SELECT *
-        FROM users
-        WHERE id=${user_id};
-      `);
+    } = await client.query(
+      `
+      SELECT *
+      FROM users
+      WHERE id=$1;
+    `,
+      [user_id]
+    );
 
     if (!user) {
       throw {
-        name: "UserErrorNotFound",
-        message: "Could not find a user with that user_id",
+        name: "UserNotFoundError",
+        message: "Could not find a User with that user_id",
       };
     }
 
+    const { rows: products } = await client.query(
+      `
+      SELECT products.*
+      FROM products
+      JOIN user_cart ON products.id=user_cart.product_id
+      WHERE user_cart.user_id=$1;
+    `,
+      [user_id]
+    );
+
+    // const { rows: [author] } = await client.query(`
+    //   SELECT id, username, name, location
+    //   FROM users
+    //   WHERE id=$1;
+    // `, [post.authorId])
+
+    user.cart = products;
+
     return user;
-  } catch (err) {
-    console.error("Could not get user by id in db/index.js @ getProductById");
+  } catch (error) {
     throw error;
   }
 }
-
 async function getUserByUsername(username) {
   try {
     const {
@@ -271,6 +290,31 @@ async function patchUser(user_id, fields = {}) {
   }
 }
 
+// GUESTS
+
+const createGuest = async ({ email, name, cart = [] }) => {
+  try {
+    const {
+      rows: [guests],
+    } = await client.query(
+      `
+            INSERT INTO guests(
+              email, name, cart
+              )
+            VALUES($1, $2, $3)
+            ON CONFLICT (email) DO NOTHING
+            RETURNING *;
+         `,
+      [email, name, cart]
+    );
+
+    return guests;
+  } catch (err) {
+    console.error("Could not create guests in db/index.js");
+    throw err;
+  }
+};
+
 // USER CART
 
 //createPostTag
@@ -311,7 +355,43 @@ async function addProductToCart(user_id, product_id) {
   }
 }
 
-async function getUserById(user_id) {
+// ORDERS
+
+async function createUserOrder(user_id, product_id) {
+  try {
+    await client.query(
+      `
+      INSERT INTO user_orders(user_id, product_id)
+      VALUES ($1, $2)
+      ON CONFLICT (user_id) DO NOTHING;
+    `,
+      [user_id, product_id]
+    );
+  } catch (error) {
+    console.error("could not create user order");
+    throw error;
+  }
+}
+//addTagsToPost
+async function addCartToUserOrders(user_id, product_id) {
+  try {
+    const { rows: product } = await client.query(
+      `
+     SELECT *
+     FROM products
+     WHERE id=$1;
+     `,
+      [product_id]
+    );
+    await createUserOrder(user_id, product_id);
+    return await getUserByIdForOrders(user_id);
+  } catch (error) {
+    console.error("could not add cart item to user");
+    throw error;
+  }
+}
+
+async function getUserByIdForOrders(user_id) {
   try {
     const {
       rows: [user],
@@ -331,23 +411,17 @@ async function getUserById(user_id) {
       };
     }
 
-    const { rows: products } = await client.query(
+    const { rows: order } = await client.query(
       `
-      SELECT products.*
-      FROM products
-      JOIN user_cart ON products.id=user_cart.product_id
-      WHERE user_cart.user_id=$1;
+      SELECT users.cart
+      FROM users
+      JOIN user_orders ON users.id=user_orders.user_id
+      WHERE user_orders.user_id=$1;
     `,
       [user_id]
     );
 
-    // const { rows: [author] } = await client.query(`
-    //   SELECT id, username, name, location
-    //   FROM users
-    //   WHERE id=$1;
-    // `, [post.authorId])
-
-    user.cart = products;
+    user.orders = order;
 
     return user;
   } catch (error) {
@@ -370,6 +444,8 @@ module.exports = {
   getUserByUsername,
   verifyUniqueUser,
   patchUser,
+  createGuest,
   addProductToCart,
+  addCartToUserOrders,
   // db methods
 };

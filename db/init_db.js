@@ -9,7 +9,9 @@ const {
   createUser,
   getAllUsers,
   patchUser,
+  createGuest,
   addProductToCart,
+  addCartToUserOrders,
 } = require("./index");
 ``;
 
@@ -18,6 +20,8 @@ async function buildTables() {
     // drop tables in correct order
     client.query(`
         DROP TABLE IF EXISTS user_cart;
+        DROP TABLE IF EXISTS user_orders;
+        DROP TABLE IF EXISTS guests;
         DROP TABLE IF EXISTS users;
         DROP TABLE IF EXISTS products;
       `);
@@ -45,11 +49,26 @@ async function buildTables() {
         name VARCHAR(255) NOT NULL,
         admin BOOLEAN DEFAULT FALSE,
         cart TEXT [],
+        orders TEXT [],
         UNIQUE(username, email)
+      );
+      CREATE TABLE guests(
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        cart TEXT [],
+        UNIQUE(email)
+      );
+      CREATE TABLE user_orders(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id),
+        product_id INTEGER REFERENCES products(id),
+        UNIQUE(user_id)
       );
       CREATE TABLE user_cart(
         user_id INTEGER REFERENCES users(id),
         product_id INTEGER REFERENCES products(id),
+        order_id INTEGER REFERENCES user_orders(id),
         UNIQUE(user_id, product_id)
       );
       `);
@@ -134,12 +153,40 @@ const createInitialUsers = async () => {
   }
 };
 
+const createInitialGuests = async () => {
+  console.log("Starting to create initial guests...");
+  try {
+    const guestsToCreate = [
+      {
+        email: "guest_shopper@yahoo.com",
+        name: "Guest Oneington",
+      },
+      {
+        email: "ilovepcparts@gmail.com",
+        name: "Yoko Homoshito",
+      },
+      {
+        email: "ripper_glover49@gmail.com",
+        name: "Rodney West",
+      },
+    ];
+    const guests = await Promise.all(guestsToCreate.map(createGuest));
+    console.log("guests created:");
+    console.log(guests);
+    console.log("Finished creating guests!");
+  } catch (err) {
+    console.error("There was a problem creating GUESTS");
+    throw err;
+  }
+};
+
 async function rebuildDB() {
   try {
     client.connect();
     await buildTables();
     await createInitialProducts();
     await createInitialUsers();
+    await createInitialGuests();
   } catch (error) {
     throw error;
   }
@@ -181,6 +228,10 @@ async function testDB() {
       username: "LeeroyCodes",
     });
     console.log("Result:", updatedUser);
+
+    console.log("Calling addCartToUserOrders");
+    const userOrder = await addCartToUserOrders(1);
+    console.log("Result:", userOrder);
     // console.log("Calling addProductToUserCart");
     // const userWithSecondProduct = await addProductToUserCart(1, 3);
     // console.log("Result:", userWithSecondProduct);
