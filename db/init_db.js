@@ -5,7 +5,7 @@ const {
   createUser,
   getAllProducts,
   getAllUsers,
-  addProductToUserCart,
+  addProductToCart,
 } = require("./index");
 ``;
 
@@ -44,8 +44,9 @@ async function buildTables() {
         UNIQUE(username, email)
       );
       CREATE TABLE user_cart(
-        user_id INTEGER,
-        product_id INTEGER
+        user_id INTEGER REFERENCES users(id),
+        product_id INTEGER REFERENCES products(id),
+        UNIQUE(user_id, product_id)
       );
       `);
     console.log("Finished building tables...");
@@ -152,13 +153,17 @@ async function testDB() {
     const users = await getAllUsers();
     console.log("Result:", users);
 
-    console.log("Calling addProductToUserCart");
-    const userWithProduct = await addProductToUserCart(1, 2);
+    console.log("Calling addProductToCart");
+    const userWithProduct = await addProductToCart(1, 2);
     console.log("Result:", userWithProduct);
 
-    console.log("Calling addProductToUserCart");
-    const userWithSecondProduct = await addProductToUserCart(1, 3);
+    console.log("Calling addProductToCart");
+    const userWithSecondProduct = await addProductToCart(1, 1);
     console.log("Result:", userWithSecondProduct);
+
+    // console.log("Calling addProductToUserCart");
+    // const userWithSecondProduct = await addProductToUserCart(1, 3);
+    // console.log("Result:", userWithSecondProduct);
     // console.log("Calling updateLink on links[0]");
     // const updateLinkResult = await updateLink(links[0].id, {
     //   name: "Instagram",
