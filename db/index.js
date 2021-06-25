@@ -69,19 +69,11 @@ async function getProductById(product_id) {
 }
 
 async function getAllProducts() {
-  // select and return an array of all routines, include their activities
   try {
-    const { rows: id } = await client.query(`
-    SELECT id 
-    FROM products;
-  `);
-
-    const products = await Promise.all(
-      id.map((product) => getProductById(product.id))
-    );
-
-    return products;
-  } catch (error) {
+    const { rows } = await client.query(`
+    SELECT * FROM products;`);
+    return rows;
+  } catch (err) {
     console.error("Could not get all products in db/index.js @ getAllProducts");
     throw error;
   }
