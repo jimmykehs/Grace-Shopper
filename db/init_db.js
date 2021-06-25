@@ -2,10 +2,14 @@
 const {
   client,
   createProduct,
-  createUser,
   getAllProducts,
+  getProductById,
+  getProductByType,
+  patchProduct,
+  createUser,
   getAllUsers,
-  addProductToUserCart,
+  patchUser,
+  addProductToCart,
 } = require("./index");
 ``;
 
@@ -44,8 +48,9 @@ async function buildTables() {
         UNIQUE(username, email)
       );
       CREATE TABLE user_cart(
-        user_id INTEGER,
-        product_id INTEGER
+        user_id INTEGER REFERENCES users(id),
+        product_id INTEGER REFERENCES products(id),
+        UNIQUE(user_id, product_id)
       );
       `);
     console.log("Finished building tables...");
@@ -152,13 +157,33 @@ async function testDB() {
     const users = await getAllUsers();
     console.log("Result:", users);
 
-    console.log("Calling addProductToUserCart");
-    const userWithProduct = await addProductToUserCart(1, 2);
+    console.log("Calling getProductByType");
+    const productByType = await getProductByType("three");
+    console.log("Result:", productByType);
+
+    console.log("Calling addProductToCart");
+    const userWithProduct = await addProductToCart(1, 2);
     console.log("Result:", userWithProduct);
 
-    console.log("Calling addProductToUserCart");
-    const userWithSecondProduct = await addProductToUserCart(1, 3);
+    console.log("Calling addProductToCart");
+    const userWithSecondProduct = await addProductToCart(1, 1);
     console.log("Result:", userWithSecondProduct);
+
+    console.log("Calling patchProduct");
+    const updatedProduct = await patchProduct(1, {
+      name: "newest product",
+    });
+    console.log("Result:", updatedProduct);
+
+    console.log("Calling patchUser");
+    const updatedUser = await patchUser(1, {
+      name: "Leeroy Jenkins",
+      username: "LeeroyCodes",
+    });
+    console.log("Result:", updatedUser);
+    // console.log("Calling addProductToUserCart");
+    // const userWithSecondProduct = await addProductToUserCart(1, 3);
+    // console.log("Result:", userWithSecondProduct);
     // console.log("Calling updateLink on links[0]");
     // const updateLinkResult = await updateLink(links[0].id, {
     //   name: "Instagram",
