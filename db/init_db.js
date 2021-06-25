@@ -4,6 +4,8 @@ const {
   createProduct,
   createUser,
   getAllProducts,
+  getAllUsers,
+  addProductToUserCart,
 } = require("./index");
 ``;
 
@@ -36,17 +38,15 @@ async function buildTables() {
         username VARCHAR(255) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
-        name VARCHAR(255) UNIQUE NOT NULL,
-        cart VARCHAR(255) [],
+        name VARCHAR(255) NOT NULL,
         admin BOOLEAN DEFAULT TRUE,
-        UNIQUE(username, email, name)
+        cart TEXT [],
+        UNIQUE(username, email)
       );
       CREATE TABLE user_cart(
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER REFERENCES users(id),
-        product_id INTEGER REFERENCES products(id),
-        UNIQUE("user_id","product_id")
-      )
+        user_id INTEGER,
+        product_id INTEGER
+      );
       `);
     console.log("Finished building tables...");
   } catch (error) {
@@ -102,21 +102,21 @@ const createInitialUsers = async () => {
         password: "AjaxDestroyer44",
         email: "brian_p@gmail.com",
         name: "Brian Pollygren",
-        cart: ["product 1"],
+        // cart: ["product 1"],
       },
       {
         username: "Shyguy666",
         password: "appleBoy24",
         email: "shyguy666@yahoo.com",
         name: "Erin Naples",
-        cart: ["product 2, product 3"],
+        // cart: ["product 3"],
       },
       {
         username: "Jessica.Troy",
         password: "AriGorn7747",
         email: "jessica.troy@gmail.com",
         name: "Jessica Troy",
-        cart: [],
+        // cart: [],
       },
     ];
     const users = await Promise.all(usersToCreate.map(createUser));
@@ -148,6 +148,17 @@ async function testDB() {
     const products = await getAllProducts();
     console.log("Result:", products);
 
+    console.log("Calling getAllUsers");
+    const users = await getAllUsers();
+    console.log("Result:", users);
+
+    console.log("Calling addProductToUserCart");
+    const userWithProduct = await addProductToUserCart(1, 2);
+    console.log("Result:", userWithProduct);
+
+    console.log("Calling addProductToUserCart");
+    const userWithSecondProduct = await addProductToUserCart(1, 3);
+    console.log("Result:", userWithSecondProduct);
     // console.log("Calling updateLink on links[0]");
     // const updateLinkResult = await updateLink(links[0].id, {
     //   name: "Instagram",
