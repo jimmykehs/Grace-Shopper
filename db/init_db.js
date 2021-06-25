@@ -2,9 +2,13 @@
 const {
   client,
   createProduct,
-  createUser,
   getAllProducts,
+  getProductById,
+  getProductByType,
+  patchProduct,
+  createUser,
   getAllUsers,
+  patchUser,
   addProductToCart,
 } = require("./index");
 ``;
@@ -153,6 +157,10 @@ async function testDB() {
     const users = await getAllUsers();
     console.log("Result:", users);
 
+    console.log("Calling getProductByType");
+    const productByType = await getProductByType("three");
+    console.log("Result:", productByType);
+
     console.log("Calling addProductToCart");
     const userWithProduct = await addProductToCart(1, 2);
     console.log("Result:", userWithProduct);
@@ -161,6 +169,18 @@ async function testDB() {
     const userWithSecondProduct = await addProductToCart(1, 1);
     console.log("Result:", userWithSecondProduct);
 
+    console.log("Calling patchProduct");
+    const updatedProduct = await patchProduct(1, {
+      name: "newest product",
+    });
+    console.log("Result:", updatedProduct);
+
+    console.log("Calling patchUser");
+    const updatedUser = await patchUser(1, {
+      name: "Leeroy Jenkins",
+      username: "LeeroyCodes",
+    });
+    console.log("Result:", updatedUser);
     // console.log("Calling addProductToUserCart");
     // const userWithSecondProduct = await addProductToUserCart(1, 3);
     // console.log("Result:", userWithSecondProduct);
