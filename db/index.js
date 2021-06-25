@@ -8,14 +8,7 @@ const client = new Client(DB_URL);
 
 // PRODUCTS
 
-const createProduct = async ({
-  name,
-  date_created,
-  description,
-  price,
-  image_url,
-  type,
-}) => {
+const createProduct = async ({ name, description, price, image_url, type }) => {
   try {
     const {
       rows: [products],
@@ -23,17 +16,16 @@ const createProduct = async ({
       `
             INSERT INTO products(
               name,
-              date_created,
               description,
               price,
               image_url,
               type
               )
-            VALUES($1, $2, $3, $4, $5, $6)
+            VALUES($1, $2, $3, $4, $5)
             ON CONFLICT (name) DO NOTHING
             RETURNING *;
          `,
-      [name, date_created, description, price, image_url, type]
+      [name, description, price, image_url, type]
     );
     return products;
   } catch (err) {
@@ -69,20 +61,31 @@ async function getProductById(product_id) {
 }
 
 async function getAllProducts() {
-  // select and return an array of all routines, include their activities
   try {
-    const { rows: id } = await client.query(`
-    SELECT id 
-    FROM products;
-  `);
-
-    const products = await Promise.all(
-      id.map((product) => getProductById(product.id))
-    );
-
-    return products;
-  } catch (error) {
+    const { rows } = await client.query(`
+    SELECT * FROM products;`);
+    return rows;
+  } catch (err) {
     console.error("Could not get all products in db/index.js @ getAllProducts");
+    throw error;
+  }
+}
+
+async function getProductByName(name) {
+  try {
+    const {
+      rows: [product],
+    } = await client.query(
+      `
+      SELECT * FROM products
+      WHERE name = ($1);
+    
+    
+    `,
+      [name]
+    );
+    return product;
+  } catch (error) {
     throw error;
   }
 }
@@ -99,7 +102,7 @@ const createUser = async ({ username, password, email, name, cart = [] }) => {
               username, password, email, name, cart
               )
             VALUES($1, $2, $3, $4, $5)
-            ON CONFLICT (username, email, name) DO NOTHING
+            ON CONFLICT (username, email) DO NOTHING
             RETURNING *;
          `,
       [username, password, email, name, cart]
@@ -288,6 +291,8 @@ module.exports = {
   getAllProducts,
   getAllUsers,
   getAllUserCarts,
+  getProductByName,
+  getUserById,
   getUserByUsername,
   verifyUniqueUser,
   addProductToUserCart,

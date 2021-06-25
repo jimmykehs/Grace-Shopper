@@ -39,7 +39,7 @@ async function buildTables() {
         password VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
         name VARCHAR(255) NOT NULL,
-        admin BOOLEAN DEFAULT TRUE,
+        admin BOOLEAN DEFAULT FALSE,
         cart TEXT [],
         UNIQUE(username, email)
       );
