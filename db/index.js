@@ -4,6 +4,8 @@ const DB_NAME = "localhost:5432/grace-shopper";
 const DB_URL = process.env.DATABASE_URL || `postgres://${DB_NAME}`;
 const client = new Client(DB_URL);
 
+//////////////////////////// FOR USE WHEN EXTERNAL FILES ARE GUCCI ///////////////////
+
 // const {
 //   createProduct,
 //   getAllProducts,
@@ -25,6 +27,7 @@ const client = new Client(DB_URL);
 
 // const { addCartToUserOrders } = require("./orders");
 // database methods
+////////////////////////////////////////////////////////////////////////////////////
 
 // PRODUCTS
 
@@ -301,6 +304,7 @@ async function createCartItem(user_id, product_id, quantity) {
     if (userCart.length === 0) {
       userCart = await createCart(user_id);
     }
+    // console.log(userCart, "USER CART");
 
     return await client.query(
       `
@@ -318,14 +322,18 @@ async function createCartItem(user_id, product_id, quantity) {
 
 async function createCart(user_id) {
   try {
-    return await client.query(
+    const {
+      rows: [userCart],
+    } = await client.query(
       `
       INSERT INTO user_cart(user_id)
       VALUES ($1)
-      ON CONFLICT (user_id) DO NOTHING;
+      ON CONFLICT (user_id) DO NOTHING
+      RETURNING *
     `,
       [user_id]
     );
+    return userCart;
   } catch (error) {
     console.error("could not create cart");
     throw error;
@@ -343,7 +351,7 @@ async function getCartByUserId(user_id) {
       [user_id]
     );
 
-    console.log(rows, "ROWS RETURNED");
+    // console.log(rows, "ROWS RETURNED");
     return rows;
   } catch (error) {
     console.error("Couldn't get cart by user id");
@@ -409,11 +417,12 @@ async function getUserById(user_id) {
       SELECT products.*
       FROM products
       JOIN cart_products ON products.id=cart_products.product_id
-      WHERE cart_products.user_cart_user_id=$1
+      JOIN user_cart ON cart_products.user_cart_id=user_cart.id
+      WHERE user_cart.user_id=$1
     `,
       [user_id]
     );
-
+    console.log(products, "PRODUCCCCCCTS");
     user.cart = products;
 
     return user;
@@ -431,7 +440,10 @@ async function createUserOrder(user_id) {
       console.error("Can't create user order without a user cart");
       throw error;
     }
-    await client.query(
+
+    const {
+      rows: [userOrder],
+    } = await client.query(
       `
       INSERT INTO user_orders(user_id, user_cart_id)
       VALUES ($1, $2)
@@ -439,6 +451,7 @@ async function createUserOrder(user_id) {
     `,
       [user_id, userCart.id]
     );
+
     await setCartInactive(userCart.id);
     return await getUserById(user_id);
   } catch (error) {
@@ -446,24 +459,44 @@ async function createUserOrder(user_id) {
     throw error;
   }
 }
-//addTagsToPost
-async function addCartToUserOrders(user_id, product_id) {
-  try {
-    const { rows: product } = await client.query(
-      `
-     SELECT *
-     FROM products
-     WHERE id=$1;
-     `,
-      [product_id]
+
+async function addCartProductsToOrderProducts(cart_id, order_id) {
+  // select all of the productIds that relate to the cart.
+  // this is an array of productIds
+  const {
+    rows: [cartProductIds],
+  } = await client.query(
+    `SELECT product_id FROM cart_products WHERE user_cart_id = $1`,
+    [cart_id]
+  );
+  // loop through each item in cartProductIds
+  for (var i = 0; i < cartProductIds.Length; i++) {
+    const cart_product_id = cartProductIds[i];
+    return await client.query(
+      `INSERT INTO order_products (order_id, product_id) VALUES ($1, $2)`,
+      [order_id, cart_product_id]
     );
-    await createUserOrder(user_id, product_id);
-    return await getUserByIdForOrders(user_id);
-  } catch (error) {
-    console.error("could not add cart item to user");
-    throw error;
   }
 }
+
+//addTagsToPost
+// async function addCartToUserOrders(cart_id, product_id) {
+//   try {
+//     const { rows: product } = await client.query(
+//       `
+//      SELECT *
+//      FROM products
+//      WHERE id=$1;
+//      `,
+//       [product_id]
+//     );
+//     await createUserOrder(user_id, product_id);
+//     return await getUserByIdForOrders(user_id);
+//   } catch (error) {
+//     console.error("could not add cart item to user");
+//     throw error;
+//   }
+// }
 
 async function getUserByIdForOrders(user_id) {
   try {
@@ -520,7 +553,8 @@ module.exports = {
   patchUser,
   createGuest,
   addProductToCart,
-  addCartToUserOrders,
+  // addCartToUserOrders,
   createUserOrder,
+  addCartProductsToOrderProducts,
   // db methods
 };
