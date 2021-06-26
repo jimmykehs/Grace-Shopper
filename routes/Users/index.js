@@ -109,7 +109,7 @@ usersRouter.post("/register", async (req, res, next) => {
         process.env.JWT_SECRET
       );
 
-      res.send({ message: "Thanks for signing up!", token, user });
+      res.send({ message: "Thanks for signing up!", token });
     }
   } catch (err) {
     console.log(err);
