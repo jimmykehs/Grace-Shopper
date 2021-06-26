@@ -37,8 +37,9 @@ export async function userLogin(username, password) {
       username,
       password,
     });
+
     if (data.token) {
-      alert("You have successfully registered!");
+      alert("You have successfully logged in!");
       setToken(data.token);
     }
     return data;
