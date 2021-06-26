@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
+import { Product, Users, Login, Register } from "./components";
+import { clearToken } from "./api";
 import "./app.css";
 
 const App = () => {
   const [message, setMessage] = useState("");
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState({});
-  const [admin, setAdmin] = useState(false);
+  const [admin, setAdmin] = useState(true);
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      setLoggedIn(true);
+    }
+  }, [setLoggedIn]);
 
   return (
     <div className="App">
@@ -38,13 +46,16 @@ const App = () => {
             </Link>
           ) : null}
           {loggedIn ? (
-            <Link className="userButtons" to="/logout">
+            <Link
+              className="userButtons"
+              onClick={() => {
+                clearToken();
+                setLoggedIn(false);
+                alert("You have logged out");
+              }}
+              to="/"
+            >
               Logout
-            </Link>
-          ) : null}
-          {admin ? (
-            <Link className="userButtons" to="/new-admin">
-              Create a New Admin
             </Link>
           ) : null}
           {admin ? (
@@ -53,6 +64,22 @@ const App = () => {
             </Link>
           ) : null}
         </div>
+        <main>
+          <Switch>
+            <Route exact path="/">
+              <Product />
+            </Route>
+            <Route exact path="/users">
+              <Users />
+            </Route>
+            <Route path="/login">
+              <Login loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+            </Route>
+            <Route path="/register">
+              <Register loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+            </Route>
+          </Switch>
+        </main>
       </Router>
     </div>
   );

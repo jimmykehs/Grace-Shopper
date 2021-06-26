@@ -8,23 +8,23 @@
 .link {
   margin: 10px;
   float: left;
-  color: white;
+  /* color: white; */
 }
 
 .header {
   padding: 10px;
   text-align: center;
-  color: white;
+  /* color: white; */
 }
 
 .userButtons {
   float: right;
   margin: 10px;
-  color: white;
+  /* color: white; */
 }
 
 .App {
-  background: url("simpsons.jpg");
+  /* background: ; */
   width: 100vw;
   height: 100vh;
 }
