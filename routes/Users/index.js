@@ -47,7 +47,7 @@ usersRouter.post("/login", async (req, res, next) => {
           { id: user.id, username: user.username, isAdmin: user.admin },
           process.env.JWT_SECRET
         );
-        res.send({ message: "You are now logged in!", token });
+        res.send({ message: "You are now logged in!", token, user });
       } else {
         next({
           name: "InvalidInfo",
@@ -109,7 +109,7 @@ usersRouter.post("/register", async (req, res, next) => {
         process.env.JWT_SECRET
       );
 
-      res.send({ message: "Thanks for signing up!", token });
+      res.send({ message: "Thanks for signing up!", token, user });
     }
   } catch (err) {
     console.log(err);
