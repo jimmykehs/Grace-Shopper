@@ -139,7 +139,13 @@ const createInitialProducts = async () => {
 
 const createInitialUsers = async () => {
   console.log("Starting to create initial users...");
+
   try {
+    await client.query(`
+  INSERT INTO users(username, password, email, name, admin)
+  VALUES('Admin', '$2b$10$/xK35sbm1UNF9TCPo27ekOR3mKkpeY0o3mW.1m/XrNAilf3e5LcdC', 'test@email.com', 'Admin',true)
+  ON CONFLICT (username, email) DO NOTHING;
+  `);
     const usersToCreate = [
       {
         username: "BrianPython",
