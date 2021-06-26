@@ -103,28 +103,31 @@ const createInitialProducts = async () => {
   try {
     const productsToCreate = [
       {
-        name: "product 1",
+        name: "Logitech G502",
         date_created: "2020/08/31",
-        description: "Link One Description.",
-        price: 1.25,
-        image_url: "https://picsum.photos/id/217/200/300",
-        type: "one",
+        description: "Logitech G502 Wireless Mouse. Missing scroll wheel.",
+        price: 59.95,
+        image_url:
+          "https://c1.neweggimages.com/ProductImageCompressAll1280/26-197-336-V01.jpg",
+        type: "mouse",
       },
       {
-        name: "product 2",
+        name: "Anne Pro 2",
         date_created: "2021/12/11",
-        description: "Link Two Description.",
-        price: 16.99,
-        image_url: "https://picsum.photos/id/227/200/300",
-        type: "two",
+        description: "Anne Pro 2 60% Keyboard. Missing A/D/F keys.",
+        price: 38.95,
+        image_url:
+          "https://c1.neweggimages.com/ProductImageCompressAll1280/AHB0_132107574488968021cmxMoW9s1f.jpg",
+        type: "keyboard",
       },
       {
-        name: "product 3",
+        name: "SteelSeries Rival 310 Gaming Mouse",
         date_created: "2019/02/07",
-        description: "Link Two Description.",
-        price: 47.99,
-        image_url: "https://picsum.photos/id/237/200/300",
-        type: "three",
+        description: "SteelSeries Rival 310 Gaming Mouse. RGB does not work.",
+        price: 15.99,
+        image_url:
+          "https://c1.neweggimages.com/ProductImageCompressAll1280/26-249-223-V01.jpg",
+        type: "mouse",
       },
     ];
     const products = await Promise.all(productsToCreate.map(createProduct));
