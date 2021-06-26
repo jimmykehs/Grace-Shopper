@@ -9,15 +9,20 @@ const {
   createUser,
   getAllUsers,
   patchUser,
+  createGuest,
   addProductToCart,
+  addCartToUserOrders,
+  createUserOrder,
 } = require("./index");
-``;
 
 async function buildTables() {
   try {
     // drop tables in correct order
     client.query(`
+        DROP TABLE IF EXISTS cart_products;
+        DROP TABLE IF EXISTS user_orders;
         DROP TABLE IF EXISTS user_cart;
+        DROP TABLE IF EXISTS guests;
         DROP TABLE IF EXISTS users;
         DROP TABLE IF EXISTS products;
       `);
@@ -26,32 +31,56 @@ async function buildTables() {
     // create all tables, in the correct order
     // products, users, user_carts **
     await client.query(`
-      CREATE TABLE products(
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255) UNIQUE NOT NULL,
-        date_created DATE NOT NULL DEFAULT CURRENT_DATE,
-        description VARCHAR(255) NOT NULL,
-        price DECIMAL DEFAULT 0,
-        image_url TEXT NOT NULL,
-        type VARCHAR(255) NOT NULL,
-        active boolean DEFAULT true
-        
-      );
-       CREATE TABLE users(
-        id SERIAL PRIMARY KEY,
-        username VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        name VARCHAR(255) NOT NULL,
-        admin BOOLEAN DEFAULT FALSE,
-        cart TEXT [],
-        UNIQUE(username, email)
-      );
-      CREATE TABLE user_cart(
-        user_id INTEGER REFERENCES users(id),
-        product_id INTEGER REFERENCES products(id),
-        UNIQUE(user_id, product_id)
-      );
+    CREATE TABLE products(
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255) UNIQUE NOT NULL,
+      date_created DATE NOT NULL DEFAULT CURRENT_DATE,
+      description VARCHAR(255) NOT NULL,
+      price DECIMAL DEFAULT 0,
+      image_url TEXT NOT NULL,
+      type VARCHAR(255) NOT NULL,
+      active boolean DEFAULT true
+  );
+  
+  CREATE TABLE users(
+      id SERIAL PRIMARY KEY,
+      username VARCHAR(255) UNIQUE NOT NULL,
+      password VARCHAR(255) NOT NULL,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      name VARCHAR(255) NOT NULL,
+      admin BOOLEAN DEFAULT FALSE,
+      UNIQUE(username, email)
+  );
+  
+  CREATE TABLE guests(
+      id SERIAL PRIMARY KEY,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      name VARCHAR(255) NOT NULL,
+      UNIQUE(email)
+  );
+  
+  CREATE TABLE user_cart(
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES users(id),
+      active BOOLEAN DEFAULT TRUE,
+      UNIQUE(user_id)
+  ); 
+  
+  CREATE TABLE user_orders(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    user_cart_id INTEGER REFERENCES user_cart(id),
+    UNIQUE(user_id, user_cart_id)
+);
+
+  CREATE TABLE cart_products(
+      id SERIAL PRIMARY KEY,
+      user_cart_id INTEGER REFERENCES user_cart(id),
+      user_cart_user_id INTEGER REFERENCES user_cart(user_id),
+      product_id INTEGER REFERENCES products(id),
+      quantity INTEGER NOT NULL,
+      UNIQUE(user_cart_id, product_id)
+  ); 
       `);
     console.log("Finished building tables...");
   } catch (error) {
@@ -134,12 +163,40 @@ const createInitialUsers = async () => {
   }
 };
 
+const createInitialGuests = async () => {
+  console.log("Starting to create initial guests...");
+  try {
+    const guestsToCreate = [
+      {
+        email: "guest_shopper@yahoo.com",
+        name: "Guest Oneington",
+      },
+      {
+        email: "ilovepcparts@gmail.com",
+        name: "Yoko Homoshito",
+      },
+      {
+        email: "ripper_glover49@gmail.com",
+        name: "Rodney West",
+      },
+    ];
+    const guests = await Promise.all(guestsToCreate.map(createGuest));
+    console.log("guests created:");
+    console.log(guests);
+    console.log("Finished creating guests!");
+  } catch (err) {
+    console.error("There was a problem creating GUESTS");
+    throw err;
+  }
+};
+
 async function rebuildDB() {
   try {
     client.connect();
     await buildTables();
     await createInitialProducts();
     await createInitialUsers();
+    // await createInitialGuests();
   } catch (error) {
     throw error;
   }
@@ -162,50 +219,33 @@ async function testDB() {
     console.log("Result:", productByType);
 
     console.log("Calling addProductToCart");
-    const userWithProduct = await addProductToCart(1, 2);
+    const userWithProduct = await addProductToCart(2, 2, 1);
     console.log("Result:", userWithProduct);
 
-    console.log("Calling addProductToCart");
-    const userWithSecondProduct = await addProductToCart(1, 1);
-    console.log("Result:", userWithSecondProduct);
+    console.log("Calling createUserOrder");
+    const userOrder = await createUserOrder(2);
+    console.log("Results:", userOrder);
 
-    console.log("Calling patchProduct");
-    const updatedProduct = await patchProduct(1, {
-      name: "newest product",
-    });
-    console.log("Result:", updatedProduct);
-
-    console.log("Calling patchUser");
-    const updatedUser = await patchUser(1, {
-      name: "Leeroy Jenkins",
-      username: "LeeroyCodes",
-    });
-    console.log("Result:", updatedUser);
-    // console.log("Calling addProductToUserCart");
-    // const userWithSecondProduct = await addProductToUserCart(1, 3);
+    // console.log("Calling addProductToCart");
+    // const userWithSecondProduct = await addProductToCart(1, 1);
     // console.log("Result:", userWithSecondProduct);
-    // console.log("Calling updateLink on links[0]");
-    // const updateLinkResult = await updateLink(links[0].id, {
-    //   name: "Instagram",
-    //   link: "http://www.instagram.com",
-    //   comment: "Photo sharing Social Network",
-    //   tags: ["social", "photography"],
+
+    // console.log("Calling patchProduct");
+    // const updatedProduct = await patchProduct(1, {
+    //   name: "newest product",
     // });
-    // console.log("Result:", updateLinkResult);
+    // console.log("Result:", updatedProduct);
 
-    // console.log("Calling getLinkById with 1");
-    // const linkById = await getLinkById(1);
-    // console.log("Result:", linkById);
-
-    // console.log("Calling updateLink on links[1], only updating tags");
-    // const updateLinkTagsResult = await updateLink(links[1].id, {
-    //   tags: ["social", "networking", "marketplace"],
+    // console.log("Calling patchUser");
+    // const updatedUser = await patchUser(1, {
+    //   name: "Leeroy Jenkins",
+    //   username: "LeeroyCodes",
     // });
-    // console.log("Result:", updateLinkTagsResult);
+    // console.log("Result:", updatedUser);
 
-    // console.log("Calling getPostsByTagName with #social");
-    // const linksWithSocial = await getLinksByTagName("social");
-    // console.log("Result:", linksWithSocial);
+    // console.log("Calling addCartToUserOrders");
+    // const userOrder = await addCartToUserOrders(1);
+    // console.log("Result:", userOrder);
 
     console.log("Finished database tests!");
   } catch (error) {
