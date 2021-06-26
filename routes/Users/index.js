@@ -3,13 +3,16 @@ const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
+const { requireAdmin, requireUser } = require("../Utils/utils.js");
 
 const {
   getAllUsers,
   createUser,
   getUserByUsername,
   verifyUniqueUser,
+  client,
 } = require("../../db");
+const { patchUser } = require("../../db/users/index.js");
 
 //Getting all users
 usersRouter.get("/", async (_, res, next) => {
@@ -115,6 +118,38 @@ usersRouter.post("/register", async (req, res, next) => {
 });
 
 //Used by admin to toggle isAdmin status
-usersRouter.patch("/:id", async (req, res, next) => {});
+usersRouter.patch("/:id", requireAdmin, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { admin } = req.body;
+    const fields = {
+      admin,
+    };
+    const updatedUser = await patchUser(id, fields);
+    res.send(updatedUser);
+  } catch (error) {
+    next(error);
+  }
+});
+
+//Used by users to update their information
+usersRouter.patch("/me/:id", requireUser, async (req, res, next) => {
+  const { id } = req.params;
+  const { name, email } = req.body;
+  const fields = {};
+  if (name) {
+    fields.name = name;
+  }
+  if (email) {
+    fields.email = email;
+  }
+
+  try {
+    const updatedUser = await patchUser(id, fields);
+    res.send(updatedUser);
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = usersRouter;

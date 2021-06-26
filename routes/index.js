@@ -24,6 +24,11 @@ apiRouter.use(async (req, res, next) => {
     } catch (error) {
       next(error);
     }
+  } else {
+    next({
+      name: "HeaderError",
+      message: "Authorization header error",
+    });
   }
 });
 

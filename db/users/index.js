@@ -83,9 +83,12 @@ async function patchUser(user_id, fields = {}) {
   const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
     .join(", ");
+
   try {
     if (setString.length > 0) {
-      await client.query(
+      const {
+        rows: [updatedUser],
+      } = await client.query(
         `
           UPDATE users
           SET ${setString}
@@ -94,11 +97,11 @@ async function patchUser(user_id, fields = {}) {
         `,
         Object.values(fields)
       );
+      return updatedUser;
     }
-
-    return await getUserById(user_id);
   } catch (error) {
     console.error("Could not patch product in db/index.js @ patchProduct");
+    console.error(error);
     throw error;
   }
 }
