@@ -11,14 +11,16 @@ const {
   patchUser,
   createGuest,
   addProductToCart,
-  addCartToUserOrders,
+  // addCartToUserOrders,
   createUserOrder,
+  addCartProductsToOrderProducts,
 } = require("./index");
 
 async function buildTables() {
   try {
     // drop tables in correct order
     client.query(`
+        DROP TABLE IF EXISTS order_products;
         DROP TABLE IF EXISTS cart_products;
         DROP TABLE IF EXISTS user_orders;
         DROP TABLE IF EXISTS user_cart;
@@ -76,11 +78,19 @@ async function buildTables() {
   CREATE TABLE cart_products(
       id SERIAL PRIMARY KEY,
       user_cart_id INTEGER REFERENCES user_cart(id),
-      user_cart_user_id INTEGER REFERENCES user_cart(user_id),
       product_id INTEGER REFERENCES products(id),
       quantity INTEGER NOT NULL,
+      active BOOLEAN DEFAULT TRUE,
       UNIQUE(user_cart_id, product_id)
   ); 
+  CREATE TABLE order_products(
+    id SERIAL PRIMARY KEY,
+    order_id INTEGER REFERENCES user_orders(id),
+    product_id INTEGER REFERENCES products(id),
+    quantity INTEGER NOT NULL
+    
+  )
+
       `);
     console.log("Finished building tables...");
   } catch (error) {
@@ -129,13 +139,7 @@ const createInitialProducts = async () => {
 
 const createInitialUsers = async () => {
   console.log("Starting to create initial users...");
-
   try {
-    await client.query(`
-  INSERT INTO users(username, password, email, name, admin)
-  VALUES('Admin', '$2b$10$/xK35sbm1UNF9TCPo27ekOR3mKkpeY0o3mW.1m/XrNAilf3e5LcdC', 'test@email.com', 'Admin',true)
-  ON CONFLICT (username, email) DO NOTHING;
-  `);
     const usersToCreate = [
       {
         username: "BrianPython",
@@ -232,26 +236,9 @@ async function testDB() {
     const userOrder = await createUserOrder(2);
     console.log("Results:", userOrder);
 
-    // console.log("Calling addProductToCart");
-    // const userWithSecondProduct = await addProductToCart(1, 1);
-    // console.log("Result:", userWithSecondProduct);
-
-    // console.log("Calling patchProduct");
-    // const updatedProduct = await patchProduct(1, {
-    //   name: "newest product",
-    // });
-    // console.log("Result:", updatedProduct);
-
-    // console.log("Calling patchUser");
-    // const updatedUser = await patchUser(1, {
-    //   name: "Leeroy Jenkins",
-    //   username: "LeeroyCodes",
-    // });
-    // console.log("Result:", updatedUser);
-
-    // console.log("Calling addCartToUserOrders");
-    // const userOrder = await addCartToUserOrders(1);
-    // console.log("Result:", userOrder);
+    console.log("Calling addCartProdcutsToOrderProducts");
+    const orderWithProducts = await addCartProductsToOrderProducts(1, 1);
+    console.log("Results:", orderWithProducts);
 
     console.log("Finished database tests!");
   } catch (error) {
