@@ -1,7 +1,12 @@
 const express = require("express");
 const productsRouter = express.Router();
 const { requireAdmin } = require("../Utils/utils.js");
-const { createProduct, getAllProducts, getProductByName } = require("../../db");
+const {
+  createProduct,
+  getAllProducts,
+  getProductByName,
+  patchProduct,
+} = require("../../db");
 
 //Gets all products
 productsRouter.get("/", async (req, res, next) => {
@@ -27,6 +32,17 @@ productsRouter.post("/", requireAdmin, async (req, res, next) => {
 
     const newProduct = await createProduct(req.body);
     res.send(newProduct);
+  } catch (error) {
+    next(error);
+  }
+});
+//Used by admin to edit products
+productsRouter.patch("/:id", requireAdmin, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const updatedProduct = await patchProduct(id, req.body);
+    res.send(updatedProduct);
   } catch (error) {
     next(error);
   }

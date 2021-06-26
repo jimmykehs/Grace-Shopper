@@ -1,5 +1,5 @@
 function requireAdmin(req, res, next) {
-  if (!req.user.admin) {
+  if (!req.user || !req.user.admin) {
     next({
       name: "Unauthorized",
       message: "You do not have access to this",
@@ -9,4 +9,21 @@ function requireAdmin(req, res, next) {
   }
 }
 
-module.exports = { requireAdmin };
+function requireUser(req, res, next) {
+  const { id } = req.params;
+  if (!req.user) {
+    next({
+      name: "NotLoggedIn",
+      message: "Must be logged in to access",
+    });
+  } else if (req.user.id != id) {
+    next({
+      name: "AuthError",
+      message: "You do not have access to change this",
+    });
+  } else {
+    next();
+  }
+}
+
+module.exports = { requireAdmin, requireUser };
