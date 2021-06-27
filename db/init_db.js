@@ -129,6 +129,43 @@ const createInitialProducts = async () => {
           "https://c1.neweggimages.com/ProductImageCompressAll1280/26-249-223-V01.jpg",
         type: "mouse",
       },
+      {
+        name: "Razer Kraken X Gaming Headset",
+        date_created: "2021/05/07",
+        description:
+          "Razer Kraken X Gaming Headset. Microphone attachment missing.",
+        price: 25.99,
+        image_url:
+          "https://images-na.ssl-images-amazon.com/images/I/61QIMDB3YTL._AC_SL1500_.jpg",
+        type: "headset",
+      },
+      {
+        name: "Logitech G432 Wired Gaming Headset",
+        date_created: "2021/12/12",
+        description: "Logitech G432 Wired Gaming Headset. Minor audio issues.",
+        price: 25.99,
+        image_url:
+          "https://images-na.ssl-images-amazon.com/images/I/61j6ey6mBpL._AC_SL1024_.jpg",
+        type: "headset",
+      },
+      {
+        name: "Razer Ornata Chroma Gaming Keyboard",
+        date_created: "2021/08/11",
+        description: "Razer Ornata Chroma Gaming Keyboard. RGB does not work.",
+        price: 20.99,
+        image_url:
+          "https://images-na.ssl-images-amazon.com/images/I/8116DtW4WWL._AC_SL1500_.jpg",
+        type: "keyboard",
+      },
+      {
+        name: "SteelSeries Arctis 5",
+        date_created: "2020/02/07",
+        description: "SteelSeries Arctis 5 Headset. Microphone does not work.",
+        price: 65.99,
+        image_url:
+          "https://images-na.ssl-images-amazon.com/images/I/81Y9BnR2%2BhL._AC_SL1500_.jpg",
+        type: "mouse",
+      },
     ];
     const products = await Promise.all(productsToCreate.map(createProduct));
     console.log("Products created:");
