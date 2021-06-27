@@ -81,7 +81,7 @@ async function buildTables() {
       product_id INTEGER REFERENCES products(id),
       quantity INTEGER NOT NULL,
       active BOOLEAN DEFAULT TRUE,
-      UNIQUE(user_cart_id, product_id)
+      UNIQUE(product_id)
   ); 
   CREATE TABLE order_products(
     id SERIAL PRIMARY KEY,
@@ -275,16 +275,20 @@ async function testDB() {
     console.log("Result:", productByType);
 
     console.log("Calling addProductToCart");
-    const userWithProduct = await addProductToCart(2, 2, 1);
+    const userWithProduct = await addProductToCart(2, 3, 1);
     console.log("Result:", userWithProduct);
 
-    console.log("Calling createUserOrder");
-    const userOrder = await createUserOrder(2);
-    console.log("Results:", userOrder);
+    console.log("Calling addProductToCart Again");
+    const userWithSecondProduct = await addProductToCart(2, 1, 2);
+    console.log("Result:", userWithSecondProduct);
 
-    console.log("Calling addCartProdcutsToOrderProducts");
-    const orderWithProducts = await addCartProductsToOrderProducts(1, 1);
-    console.log("Results:", orderWithProducts);
+    // console.log("Calling createUserOrder");
+    // const userOrder = await createUserOrder(2);
+    // console.log("Results:", userOrder);
+
+    // console.log("Calling addCartProdcutsToOrderProducts");
+    // const orderWithProducts = await addCartProductsToOrderProducts(1, 1);
+    // console.log("Results:", orderWithProducts);
 
     console.log("Finished database tests!");
   } catch (error) {
