@@ -3,4 +3,4 @@ const cartRouter = express.Router();
 
 cartRouter.post("/", (req, res, next) => {});
 
-module.exports = { cartRouter };
+module.exports = cartRouter;
