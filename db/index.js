@@ -301,19 +301,35 @@ const createGuest = async ({ email, name, cart = [] }) => {
 async function createCartItem(user_id, product_id, quantity) {
   try {
     let userCart = await getCartByUserId(user_id);
+
     if (userCart.length === 0) {
       userCart = await createCart(user_id);
+      const {
+        rows: [product],
+      } = await client.query(
+        `
+        INSERT INTO cart_products(user_cart_id, product_id, quantity)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (product_id) DO NOTHING
+        RETURNING *
+      `,
+        [userCart.id, product_id, quantity]
+      );
+      return product;
     }
-    // console.log(userCart, "USER CART");
 
-    return await client.query(
+    const {
+      rows: [product],
+    } = await client.query(
       `
       INSERT INTO cart_products(user_cart_id, product_id, quantity)
       VALUES ($1, $2, $3)
-      ON CONFLICT (user_cart_id, product_id) DO NOTHING;
+      ON CONFLICT (product_id) DO NOTHING
+      RETURNING *
     `,
-      [userCart.id, product_id, quantity]
+      [userCart[0].id, product_id, quantity]
     );
+    return product;
   } catch (error) {
     console.error("could not create cart item");
     throw error;
@@ -342,17 +358,15 @@ async function createCart(user_id) {
 
 async function getCartByUserId(user_id) {
   try {
-    const { rows } = await client.query(
+    const { rows: userCart } = await client.query(
       `
       SELECT * FROM user_cart
       WHERE user_id=$1 AND active=true
-      LIMIT 1
       `,
       [user_id]
     );
 
-    // console.log(rows, "ROWS RETURNED");
-    return rows;
+    return userCart;
   } catch (error) {
     console.error("Couldn't get cart by user id");
     throw error;
