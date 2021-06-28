@@ -3,7 +3,7 @@ import { Redirect } from "react-router-dom";
 import { userLogin } from "../api";
 
 const Login = (props) => {
-  const { setLoggedIn, message, setMessage } = props;
+  const { setLoggedIn, setAdmin, message, setMessage } = props;
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -30,6 +30,7 @@ const Login = (props) => {
           event.preventDefault();
           try {
             let submit = await userLogin(username, password);
+            setAdmin(submit.user.admin);
 
             if (submit.error) {
               alert("There was an error logging in...");

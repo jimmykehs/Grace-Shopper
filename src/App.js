@@ -9,7 +9,7 @@ const App = () => {
   const [message, setMessage] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState({});
-  const [admin, setAdmin] = useState(true);
+  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -73,7 +73,11 @@ const App = () => {
               <Users />
             </Route>
             <Route path="/login">
-              <Login loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+              <Login
+                loggedIn={loggedIn}
+                setLoggedIn={setLoggedIn}
+                setAdmin={setAdmin}
+              />
             </Route>
             <Route path="/register">
               <Register loggedIn={loggedIn} setLoggedIn={setLoggedIn} />

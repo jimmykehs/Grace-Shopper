@@ -77,11 +77,11 @@ async function buildTables() {
 
   CREATE TABLE cart_products(
       id SERIAL PRIMARY KEY,
-      user_cart_id INTEGER REFERENCES user_cart(id),
-      product_id INTEGER REFERENCES products(id),
+      "user_cart_id" INTEGER REFERENCES user_cart(id),
+      "product_id" INTEGER REFERENCES products(id),
       quantity INTEGER NOT NULL,
       active BOOLEAN DEFAULT TRUE,
-      UNIQUE(product_id)
+      UNIQUE("user_cart_id", "product_id")
   ); 
   CREATE TABLE order_products(
     id SERIAL PRIMARY KEY,
@@ -179,13 +179,7 @@ const createInitialProducts = async () => {
 
 const createInitialUsers = async () => {
   console.log("Starting to create initial users...");
-
   try {
-    await client.query(`
-  INSERT INTO users(username, password, email, name, admin)
-  VALUES('Admin', '$2b$10$/xK35sbm1UNF9TCPo27ekOR3mKkpeY0o3mW.1m/XrNAilf3e5LcdC', 'test@email.com', 'Admin',true)
-  ON CONFLICT (username, email) DO NOTHING;
-  `);
     const usersToCreate = [
       {
         username: "BrianPython",

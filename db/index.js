@@ -301,34 +301,36 @@ const createGuest = async ({ email, name, cart = [] }) => {
 async function createCartItem(user_id, product_id, quantity) {
   try {
     let userCart = await getCartByUserId(user_id);
-
     if (userCart.length === 0) {
       userCart = await createCart(user_id);
+
       const {
         rows: [product],
       } = await client.query(
         `
         INSERT INTO cart_products(user_cart_id, product_id, quantity)
         VALUES ($1, $2, $3)
-        ON CONFLICT (product_id) DO NOTHING
-        RETURNING *
+        ON CONFLICT (user_cart_id, product_id) DO NOTHING
+        RETURNING *;
       `,
         [userCart.id, product_id, quantity]
       );
+      console.log(product);
       return product;
     }
-
     const {
       rows: [product],
     } = await client.query(
       `
       INSERT INTO cart_products(user_cart_id, product_id, quantity)
       VALUES ($1, $2, $3)
-      ON CONFLICT (product_id) DO NOTHING
-      RETURNING *
+      ON CONFLICT (user_cart_id, product_id) DO NOTHING
+
+      RETURNING *;
     `,
       [userCart[0].id, product_id, quantity]
     );
+    console.log(product);
     return product;
   } catch (error) {
     console.error("could not create cart item");
@@ -388,7 +390,7 @@ async function getCartByUserId(user_id) {
     throw error;
   }
 }
-//addTagsToPost
+
 async function addProductToCart(user_id, product_id, quantity) {
   try {
     const {
@@ -461,6 +463,49 @@ async function getUserById(user_id) {
   }
 }
 
+async function deleteCartItem(user_id, product_id) {
+  try {
+    const userCart = await getCartByUserId(user_id);
+    console.log("USER CART", userCart);
+    const {
+      rows: [deletedItem],
+    } = await client.query(
+      `
+      DELETE FROM cart_products
+      WHERE user_cart_id = ($1) AND
+      product_id = ($2)
+      RETURNING *;
+      `,
+      [userCart[0].id, product_id]
+    );
+    return deletedItem;
+  } catch (error) {
+    console.error("Can't delete cart item");
+    throw error;
+  }
+}
+async function updateProductQuantity(user_id, product_id, quantity) {
+  try {
+    const userCart = await getCartByUserId(user_id);
+    const {
+      rows: [updatedProduct],
+    } = await client.query(
+      `
+      UPDATE cart_products
+      SET quantity = ($1)
+      WHERE user_cart_id = ($2) AND
+      product_id = ($3)
+      RETURNING *;
+    `,
+      [quantity, userCart[0].id, product_id]
+    );
+    return updatedProduct;
+  } catch (error) {
+    console.log(error);
+    console.error("Couldn't update quantities");
+    throw error;
+  }
+}
 // ORDERS
 
 async function createUserOrder(user_id) {
@@ -576,6 +621,9 @@ module.exports = {
   addProductToCart,
   // addCartToUserOrders,
   createUserOrder,
+  createCartItem,
   addCartProductsToOrderProducts,
+  deleteCartItem,
+  updateProductQuantity,
   // db methods
 };

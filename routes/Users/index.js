@@ -3,7 +3,7 @@ const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
-const { requireAdmin, requireUser } = require("../Utils/utils.js");
+const { requireAdmin, authUser } = require("../Utils/utils.js");
 
 const {
   getAllUsers,
@@ -47,7 +47,7 @@ usersRouter.post("/login", async (req, res, next) => {
           { id: user.id, username: user.username, isAdmin: user.admin },
           process.env.JWT_SECRET
         );
-        res.send({ message: "You are now logged in!", token });
+        res.send({ message: "You are now logged in!", token, user });
       } else {
         next({
           name: "InvalidInfo",
@@ -133,7 +133,7 @@ usersRouter.patch("/:id", requireAdmin, async (req, res, next) => {
 });
 
 //Used by users to update their information
-usersRouter.patch("/me/:id", requireUser, async (req, res, next) => {
+usersRouter.patch("/me/:id", authUser, async (req, res, next) => {
   const { id } = req.params;
   const { name, email } = req.body;
   const fields = {};

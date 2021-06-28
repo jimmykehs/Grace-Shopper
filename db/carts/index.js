@@ -9,9 +9,7 @@ async function createCartItem(user_id, product_id) {
     return await client.query(
       `
         INSERT INTO cart_products(user_cart_id, product_id)
-        VALUES ($1, $2)
-        ON CONFLICT (user_cart_id, product_id) DO NOTHING;
-      `,
+        VALUES ($1, $2);      `,
       [userCart.id, product_id]
     );
   } catch (error) {
