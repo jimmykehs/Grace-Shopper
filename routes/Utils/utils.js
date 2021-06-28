@@ -9,7 +9,7 @@ function requireAdmin(req, res, next) {
   }
 }
 
-function requireUser(req, res, next) {
+function authUser(req, res, next) {
   const { id } = req.params;
   if (!req.user) {
     next({
@@ -26,4 +26,15 @@ function requireUser(req, res, next) {
   }
 }
 
-module.exports = { requireAdmin, requireUser };
+function requireUser(req, res, next) {
+  if (!req.user) {
+    next({
+      name: "NotLoggedIn",
+      message: "Must be logged in to access",
+    });
+  } else {
+    next();
+  }
+}
+
+module.exports = { authUser, requireAdmin, requireUser };

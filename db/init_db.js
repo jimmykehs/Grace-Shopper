@@ -77,11 +77,11 @@ async function buildTables() {
 
   CREATE TABLE cart_products(
       id SERIAL PRIMARY KEY,
-      user_cart_id INTEGER REFERENCES user_cart(id),
-      product_id INTEGER REFERENCES products(id),
+      "user_cart_id" INTEGER REFERENCES user_cart(id),
+      "product_id" INTEGER REFERENCES products(id),
       quantity INTEGER NOT NULL,
       active BOOLEAN DEFAULT TRUE,
-      UNIQUE(product_id)
+      UNIQUE("user_cart_id", "product_id")
   ); 
   CREATE TABLE order_products(
     id SERIAL PRIMARY KEY,
