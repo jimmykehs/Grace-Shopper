@@ -282,12 +282,12 @@ async function testDB() {
     const userWithSecondProduct = await addProductToCart(2, 1, 2);
     console.log("Result:", userWithSecondProduct);
 
-    // console.log("Calling createUserOrder");
-    // const userOrder = await createUserOrder(2);
-    // console.log("Results:", userOrder);
+    console.log("Calling createUserOrder");
+    const userOrder = await createUserOrder(2);
+    console.log("Results:", userOrder);
 
     // console.log("Calling addCartProdcutsToOrderProducts");
-    // const orderWithProducts = await addCartProductsToOrderProducts(1, 1);
+    // const orderWithProducts = await addCartProductsToOrderProducts(1, 1, 2);
     // console.log("Results:", orderWithProducts);
 
     console.log("Finished database tests!");

@@ -336,6 +336,22 @@ async function createCartItem(user_id, product_id, quantity) {
   }
 }
 
+async function updateCartItemQuantity(user_cart_id, product_id, quantity) {
+  try {
+    await client.query(
+      `
+      UPDATE cart_products
+      SET $3
+      WHERE id=$1 AND product_id=$2
+      RETURNING *;
+    `,
+      [user_cart_id, product_id, quantity]
+    );
+  } catch (err) {
+    throw err;
+  }
+}
+
 async function createCart(user_id) {
   try {
     const {
@@ -436,7 +452,7 @@ async function getUserById(user_id) {
     `,
       [user_id]
     );
-    console.log(products, "PRODUCCCCCCTS");
+    console.log(products[0], "PRODUCCCCCCTS");
     user.cart = products;
 
     return user;
@@ -454,20 +470,20 @@ async function createUserOrder(user_id) {
       console.error("Can't create user order without a user cart");
       throw error;
     }
-
-    const {
-      rows: [userOrder],
-    } = await client.query(
+    console.log(userCart, "USER CART");
+    const { rows: createdOrder } = await client.query(
       `
-      INSERT INTO user_orders(user_id, user_cart_id)
-      VALUES ($1, $2)
-      ON CONFLICT (user_id, user_cart_id) DO NOTHING;
-    `,
-      [user_id, userCart.id]
+        INSERT INTO user_orders(user_id, user_cart_id)
+        VALUES ($1, $2)
+        ON CONFLICT (user_id, user_cart_id) DO NOTHING
+        RETURNING *
+      `,
+      [user_id, userCart[0].id]
     );
-
-    await setCartInactive(userCart.id);
-    return await getUserById(user_id);
+    console.log(createdOrder, "CREATED ORDER");
+    await setCartInactive(userCart[0].id);
+    await addCartProductsToOrderProducts(userCart[0].id, createdOrder[0].id);
+    return await getUserByIdForOrders(user_id);
   } catch (error) {
     console.error("could not create user order");
     throw error;
@@ -477,40 +493,30 @@ async function createUserOrder(user_id) {
 async function addCartProductsToOrderProducts(cart_id, order_id) {
   // select all of the productIds that relate to the cart.
   // this is an array of productIds
-  const {
-    rows: [cartProductIds],
-  } = await client.query(
-    `SELECT product_id FROM cart_products WHERE user_cart_id = $1`,
-    [cart_id]
-  );
-  // loop through each item in cartProductIds
-  for (var i = 0; i < cartProductIds.Length; i++) {
-    const cart_product_id = cartProductIds[i];
-    return await client.query(
-      `INSERT INTO order_products (order_id, product_id) VALUES ($1, $2)`,
-      [order_id, cart_product_id]
+  try {
+    const { rows: cartProducts } = await client.query(
+      `SELECT * FROM cart_products WHERE user_cart_id = $1`,
+      [cart_id]
     );
+    console.log(cart_id, "CART ID");
+    console.log(cartProducts, "CART PRODUCTS");
+
+    for (let i = 0; i < cartProducts.length; i++) {
+      const { rows: products } = await client.query(
+        `
+             INSERT INTO order_products(order_id, product_id, quantity)
+             VALUES ($1, $2, $3)
+             RETURNING *
+          `,
+        [order_id, cartProducts[i].id, cartProducts[i].quantity]
+      );
+      return products;
+    }
+  } catch (err) {
+    console.error("Can not add cart product to order product!");
+    throw err;
   }
 }
-
-//addTagsToPost
-// async function addCartToUserOrders(cart_id, product_id) {
-//   try {
-//     const { rows: product } = await client.query(
-//       `
-//      SELECT *
-//      FROM products
-//      WHERE id=$1;
-//      `,
-//       [product_id]
-//     );
-//     await createUserOrder(user_id, product_id);
-//     return await getUserByIdForOrders(user_id);
-//   } catch (error) {
-//     console.error("could not add cart item to user");
-//     throw error;
-//   }
-// }
 
 async function getUserByIdForOrders(user_id) {
   try {
@@ -531,19 +537,20 @@ async function getUserByIdForOrders(user_id) {
         message: "Could not find a User with that user_id",
       };
     }
-
+    console.log(user_id, "USER ID");
     const { rows: products } = await client.query(
       `
       SELECT products.*
       FROM products
-      JOIN cart_products ON product_id=products.id
-      WHERE cart_products.user_cart_id=$1
+      INNER JOIN order_products ON products.id=order_products.product_id
+      INNER JOIN user_orders ON order_products.order_id=user_orders.id
+      WHERE user_orders.user_id=$1
     `,
       [user_id]
     );
 
     user.order = products;
-
+    console.log(products, "PRODUCTS");
     return user;
   } catch (error) {
     throw error;
