@@ -3,6 +3,11 @@ const { Client } = require("pg");
 const DB_NAME = "localhost:5432/grace-shopper";
 const DB_URL = process.env.DATABASE_URL || `postgres://${DB_NAME}`;
 const client = new Client(DB_URL);
+const pgp = require("pg-promise")({
+  /* initialization options */
+  capSQL: true, // capitalize all generated SQL
+});
+const db = pgp(DB_URL);
 
 //////////////////////////// FOR USE WHEN EXTERNAL FILES ARE GUCCI ///////////////////
 
@@ -460,8 +465,20 @@ async function getUserById(user_id) {
     `,
       [user_id]
     );
-    console.log(products[0], "PRODUCCCCCCTS");
+    console.log(products, "PRODUCCCCCCTS");
     user.cart = products;
+    const { rows: orderProducts } = await client.query(
+      `
+      SELECT *
+      FROM products
+      INNER JOIN order_products ON products.id=order_products.product_id
+      INNER JOIN user_orders ON order_products.order_id=user_orders.id
+      WHERE user_orders.user_id=$1
+    `,
+      [user_id]
+    );
+
+    user.order = orderProducts;
 
     return user;
   } catch (error) {
@@ -521,7 +538,7 @@ async function createUserOrder(user_id) {
       console.error("Can't create user order without a user cart");
       throw error;
     }
-    console.log(userCart, "USER CART");
+    // console.log(userCart, "USER CART");
     const { rows: createdOrder } = await client.query(
       `
         INSERT INTO user_orders(user_id, user_cart_id)
@@ -549,24 +566,25 @@ async function addCartProductsToOrderProducts(cart_id, order_id) {
       `SELECT * FROM cart_products WHERE user_cart_id = $1`,
       [cart_id]
     );
-    console.log(cart_id, "CART ID");
-    console.log(cartProducts, "CART PRODUCTS");
-
-    for (let i = 0; i < cartProducts.length; i++) {
-      const { rows: products } = await client.query(
-        `
-             INSERT INTO order_products(order_id, product_id, quantity)
-             VALUES ($1, $2, $3)
-             RETURNING *
-          `,
-        [order_id, cartProducts[i].id, cartProducts[i].quantity]
-      );
-      return products;
-    }
+    // console.log(cart_id, "CART ID");
+    // console.log(cartProducts, "CART PRODUCTS");
+    await bulkUpdateOrderProducts(order_id, cartProducts);
   } catch (err) {
     console.error("Can not add cart product to order product!");
     throw err;
   }
+}
+
+async function bulkUpdateOrderProducts(order_id, cartProducts) {
+  const newCartProducts = cartProducts.map((cp) => {
+    return { order_id, ...cp };
+  });
+  // console.log(newCartProducts, "NEW CART PRODUCTS");
+  const cs = new pgp.helpers.ColumnSet(["order_id", "product_id", "quantity"], {
+    table: "order_products",
+  });
+  const query = pgp.helpers.insert(newCartProducts, cs);
+  await db.none(query);
 }
 
 async function getUserByIdForOrders(user_id) {
@@ -591,7 +609,7 @@ async function getUserByIdForOrders(user_id) {
     console.log(user_id, "USER ID");
     const { rows: products } = await client.query(
       `
-      SELECT products.*
+      SELECT *
       FROM products
       INNER JOIN order_products ON products.id=order_products.product_id
       INNER JOIN user_orders ON order_products.order_id=user_orders.id
