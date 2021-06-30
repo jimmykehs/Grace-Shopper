@@ -168,20 +168,26 @@ async function getProductByType(type) {
 
 // USERS FUNCTIONS
 
-const createUser = async ({ username, password, email, name }) => {
+const createUser = async ({
+  username,
+  password,
+  email,
+  name,
+  admin = false,
+}) => {
   try {
     const {
       rows: [users],
     } = await client.query(
       `
             INSERT INTO users(
-              username, password, email, name
+              username, password, email, name, admin
               )
-            VALUES($1, $2, $3, $4)
+            VALUES($1, $2, $3, $4, $5)
             ON CONFLICT (username, email) DO NOTHING
             RETURNING *;
          `,
-      [username, password, email, name]
+      [username, password, email, name, admin]
     );
 
     return users;

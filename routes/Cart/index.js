@@ -2,6 +2,7 @@ const express = require("express");
 const cartRouter = express.Router();
 const { requireUser } = require("../Utils/utils.js");
 const {
+  addProductToCart,
   createCartItem,
   deleteCartItem,
   updateProductQuantity,
@@ -10,7 +11,7 @@ const {
 cartRouter.post("/", requireUser, async (req, res, next) => {
   const { id } = req.user;
   const { product_id, quantity } = req.body;
-  const addedItem = await createCartItem(id, product_id, quantity);
+  const addedItem = await addProductToCart(id, product_id, quantity);
   console.log(addedItem);
   res.send(addedItem);
 });
