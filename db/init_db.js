@@ -1,4 +1,5 @@
 // code to build and initialize DB goes here
+const bcrypt = require("bcrypt");
 const {
   client,
   createProduct,
@@ -180,6 +181,14 @@ const createInitialProducts = async () => {
 const createInitialUsers = async () => {
   console.log("Starting to create initial users...");
   try {
+    const adminUser = {
+      username: "admin",
+      password: await bcrypt.hash("password", 10),
+      email: "test@example.com",
+      name: "Admin",
+      admin: true,
+    };
+    await createUser(adminUser);
     const usersToCreate = [
       {
         username: "BrianPython",
