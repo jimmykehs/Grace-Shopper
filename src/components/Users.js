@@ -13,7 +13,9 @@ const Users = () => {
     }
   };
 
-  useEffect(getAllUser, []);
+  useEffect(() => {
+    getAllUser();
+  }, []);
 
   return (
     <div>
