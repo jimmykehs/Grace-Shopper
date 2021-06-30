@@ -1,6 +1,7 @@
 import { get } from "http";
 import React, { useState, useEffect } from "react";
-import { getProducts } from "../api";
+import { getProducts } from "../../api";
+import "./Product.css";
 
 const Products = () => {
   const [grabbedProducts, setGrabbedProducts] = useState();
@@ -31,7 +32,7 @@ const Products = () => {
               ></img>
               <p>Description: {product.description}</p>
               <p>Type: {product.type}</p>
-              <h3>Price: {product.price}</h3>
+              <h3>Price: ${product.price}</h3>
             </div>
           );
         })}

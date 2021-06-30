@@ -11,6 +11,7 @@ import {
   CreateProduct,
 } from "./components";
 import { clearToken } from "./api";
+import { Egg } from "./Img";
 import "./app.css";
 
 const App = () => {
@@ -28,7 +29,47 @@ const App = () => {
       <Router>
         <div className="header">
           <h1>UsedEgg</h1>
-          <hr></hr>
+          <img src={Egg} />
+          <div className="userOptions">
+            <Link className="userButtons" to="/cart">
+              View Cart
+            </Link>
+            {!loggedIn ? (
+              <Link className="userButtons" to="/register">
+                Sign Up
+              </Link>
+            ) : null}
+            {!loggedIn ? (
+              <Link className="userButtons" to="/login">
+                Login
+              </Link>
+            ) : null}
+            {admin ? (
+              <Link className="userButtons" to="/create-product">
+                Create Product
+              </Link>
+            ) : null}
+            {admin ? (
+              <Link className="userButtons" to="/users">
+                View Users
+              </Link>
+            ) : null}
+            {loggedIn ? (
+              <Link
+                className="userButtons"
+                onClick={() => {
+                  clearToken();
+                  setLoggedIn(false);
+                  alert("You have logged out");
+                }}
+                to="/"
+              >
+                Logout
+              </Link>
+            ) : null}
+          </div>
+        </div>
+        <div>
           <Link className="link" to="/">
             View All Products
           </Link>
@@ -41,42 +82,6 @@ const App = () => {
           <Link className="link" to="/headsets">
             Broken Headsets
           </Link>
-          <Link className="userButtons" to="/cart">
-            View Cart
-          </Link>
-          {!loggedIn ? (
-            <Link className="userButtons" to="/register">
-              Sign Up
-            </Link>
-          ) : null}
-          {!loggedIn ? (
-            <Link className="userButtons" to="/login">
-              Login
-            </Link>
-          ) : null}
-          {loggedIn ? (
-            <Link
-              className="userButtons"
-              onClick={() => {
-                clearToken();
-                setLoggedIn(false);
-                alert("You have logged out");
-              }}
-              to="/"
-            >
-              Logout
-            </Link>
-          ) : null}
-          {admin ? (
-            <Link className="userButtons" to="/users">
-              View Users
-            </Link>
-          ) : null}
-          {admin ? (
-            <Link className="userButtons" to="/create-product">
-              Create Product
-            </Link>
-          ) : null}
         </div>
         <main>
           <Switch>
