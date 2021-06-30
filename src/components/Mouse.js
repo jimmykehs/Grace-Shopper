@@ -1,27 +1,30 @@
-import { get } from "http";
 import React, { useState, useEffect } from "react";
 import { getProducts } from "../api";
 
-const Products = () => {
-  const [grabbedProducts, setGrabbedProducts] = useState();
+const Mouse = () => {
+  const [grabbedMouse, setGrabbedMouse] = useState();
 
-  const getAllProducts = async () => {
+  const getAllMouse = async () => {
     try {
       const products = await getProducts();
-      setGrabbedProducts(products);
+      let mouse = products.filter((product) => {
+        return product.type.toLowerCase().includes("mouse");
+      });
+      setGrabbedMouse(mouse);
     } catch (error) {
       console.error(error);
     }
   };
+
   useEffect(() => {
-    getAllProducts();
+    getAllMouse();
   }, []);
 
   return (
     <div>
       <h1>Enjoy all the Broken:</h1>
       <div className="productCards">
-        {grabbedProducts?.map((product, index) => {
+        {grabbedMouse?.map((product, index) => {
           return (
             <div className="product" key={index}>
               <h2>Product:{product.name}</h2>
@@ -40,4 +43,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default Mouse;
