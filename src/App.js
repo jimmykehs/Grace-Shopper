@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from "react";
-import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
-import { Product, Users, Login, Register } from "./components";
+import {
+  Product,
+  Users,
+  Login,
+  Register,
+  Keyboards,
+  Mouse,
+  Headsets,
+  CreateProduct,
+} from "./components";
 import { clearToken } from "./api";
 import "./app.css";
 
 const App = () => {
-  const [message, setMessage] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-  const [user, setUser] = useState({});
   const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
@@ -30,7 +36,10 @@ const App = () => {
             Broken Mice
           </Link>
           <Link className="link" to="/keyboard">
-            Broken Keyboard
+            Broken Keyboards
+          </Link>
+          <Link className="link" to="/headsets">
+            Broken Headsets
           </Link>
           <Link className="userButtons" to="/cart">
             View Cart
@@ -63,14 +72,31 @@ const App = () => {
               View Users
             </Link>
           ) : null}
+          {admin ? (
+            <Link className="userButtons" to="/create-product">
+              Create Product
+            </Link>
+          ) : null}
         </div>
         <main>
           <Switch>
             <Route exact path="/">
               <Product />
             </Route>
+            <Route exact path="/keyboard">
+              <Keyboards />
+            </Route>
+            <Route exact path="/mouse">
+              <Mouse />
+            </Route>
+            <Route exact path="/headsets">
+              <Headsets />
+            </Route>
             <Route exact path="/users">
               <Users />
+            </Route>
+            <Route exact path="/create-product">
+              <CreateProduct />
             </Route>
             <Route path="/login">
               <Login

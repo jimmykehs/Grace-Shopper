@@ -3,3 +3,7 @@ export { default as Product } from "./Product";
 export { default as Users } from "./Users";
 export { default as Login } from "./Login";
 export { default as Register } from "./Register";
+export { default as Keyboards } from "./Keyboards";
+export { default as Mouse } from "./Mouse";
+export { default as Headsets } from "./Headsets";
+export { default as CreateProduct } from "./CreateProduct";

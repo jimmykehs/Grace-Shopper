@@ -66,3 +66,38 @@ export async function userRegister(name, email, username, password) {
     throw error;
   }
 }
+
+export async function changeAdmin(id, admin) {
+  try {
+    let updatedInfo = {};
+    let adminStatus = prompt(
+      "What would you like to change the admin status to?",
+      admin
+    );
+
+    if (adminStatus) {
+      updatedInfo.admin = adminStatus;
+    }
+    const { data } = await axios.patch(`/api/users/${id}`, updatedInfo);
+    console.log(data);
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function createProduct(name, description, price, image_url, type) {
+  try {
+    const { data } = await axios.post("/api/products", {
+      name,
+      description,
+      price,
+      image_url,
+      type,
+    });
+    alert("Product successfully added");
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
