@@ -1,28 +1,30 @@
-import { get } from "http";
 import React, { useState, useEffect } from "react";
-import { getProducts } from "../../api";
-import "./Product.css";
+import { getProducts } from "../api";
 
-const Products = () => {
-  const [grabbedProducts, setGrabbedProducts] = useState();
+const Keyboards = () => {
+  const [grabbedKeyboards, setGrabbedKeyboards] = useState();
 
-  const getAllProducts = async () => {
+  const getAllKeyboards = async () => {
     try {
       const products = await getProducts();
-      setGrabbedProducts(products);
+      let keyboards = products.filter((product) => {
+        return product.type.toLowerCase().includes("keyboard");
+      });
+      setGrabbedKeyboards(keyboards);
     } catch (error) {
       console.error(error);
     }
   };
+
   useEffect(() => {
-    getAllProducts();
+    getAllKeyboards();
   }, []);
 
   return (
     <div>
       <h1>Enjoy all the Broken:</h1>
       <div className="productCards">
-        {grabbedProducts?.map((product, index) => {
+        {grabbedKeyboards?.map((product, index) => {
           return (
             <div className="product" key={index}>
               <h2>Product:{product.name}</h2>
@@ -32,7 +34,7 @@ const Products = () => {
               ></img>
               <p>Description: {product.description}</p>
               <p>Type: {product.type}</p>
-              <h3>Price: ${product.price}</h3>
+              <h3>Price: {product.price}</h3>
             </div>
           );
         })}
@@ -41,4 +43,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default Keyboards;

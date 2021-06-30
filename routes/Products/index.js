@@ -20,7 +20,7 @@ productsRouter.get("/", async (req, res, next) => {
 });
 
 //Used by admin to add products
-productsRouter.post("/", requireAdmin, async (req, res, next) => {
+productsRouter.post("/", async (req, res, next) => {
   try {
     const existingProduct = await getProductByName(req.body.name);
     if (existingProduct) {
@@ -29,7 +29,7 @@ productsRouter.post("/", requireAdmin, async (req, res, next) => {
         message: "Product already exists with this name!",
       });
     }
-
+    const { name, description, price, image_url, type } = req.body;
     const newProduct = await createProduct(req.body);
     res.send(newProduct);
   } catch (error) {

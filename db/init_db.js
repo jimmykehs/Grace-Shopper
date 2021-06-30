@@ -165,7 +165,7 @@ const createInitialProducts = async () => {
         price: 65.99,
         image_url:
           "https://images-na.ssl-images-amazon.com/images/I/81Y9BnR2%2BhL._AC_SL1500_.jpg",
-        type: "mouse",
+        type: "headset",
       },
     ];
     const products = await Promise.all(productsToCreate.map(createProduct));
@@ -285,12 +285,12 @@ async function testDB() {
     const userWithSecondProduct = await addProductToCart(2, 1, 2);
     console.log("Result:", userWithSecondProduct);
 
-    // console.log("Calling createUserOrder");
-    // const userOrder = await createUserOrder(2);
-    // console.log("Results:", userOrder);
+    console.log("Calling createUserOrder");
+    const userOrder = await createUserOrder(2);
+    console.log("Results:", userOrder);
 
     // console.log("Calling addCartProdcutsToOrderProducts");
-    // const orderWithProducts = await addCartProductsToOrderProducts(1, 1);
+    // const orderWithProducts = await addCartProductsToOrderProducts(1, 1, 2);
     // console.log("Results:", orderWithProducts);
 
     console.log("Finished database tests!");

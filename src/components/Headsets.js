@@ -1,28 +1,29 @@
-import { get } from "http";
 import React, { useState, useEffect } from "react";
-import { getProducts } from "../../api";
-import "./Product.css";
+import { getProducts } from "../api";
 
-const Products = () => {
-  const [grabbedProducts, setGrabbedProducts] = useState();
+const Headsets = () => {
+  const [grabbedHeadsets, setGrabbedHeadsets] = useState();
 
-  const getAllProducts = async () => {
+  const getAllHeadsets = async () => {
     try {
       const products = await getProducts();
-      setGrabbedProducts(products);
+      let headsets = products.filter((product) => {
+        return product.type.toLowerCase().includes("headset");
+      });
+      setGrabbedHeadsets(headsets);
     } catch (error) {
       console.error(error);
     }
   };
   useEffect(() => {
-    getAllProducts();
+    getAllHeadsets();
   }, []);
 
   return (
     <div>
       <h1>Enjoy all the Broken:</h1>
       <div className="productCards">
-        {grabbedProducts?.map((product, index) => {
+        {grabbedHeadsets?.map((product, index) => {
           return (
             <div className="product" key={index}>
               <h2>Product:{product.name}</h2>
@@ -32,7 +33,7 @@ const Products = () => {
               ></img>
               <p>Description: {product.description}</p>
               <p>Type: {product.type}</p>
-              <h3>Price: ${product.price}</h3>
+              <h3>Price: {product.price}</h3>
             </div>
           );
         })}
@@ -41,4 +42,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default Headsets;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { getUsers } from "../api";
+import { Redirect } from "react-router-dom";
+import { changeAdmin, getUsers } from "../api";
 
 const Users = () => {
   const [grabbedUsers, setGrabbedUsers] = useState();
@@ -17,6 +18,15 @@ const Users = () => {
     getAllUser();
   }, []);
 
+  const handleChangeAdminStatus = async (id, admin) => {
+    try {
+      await changeAdmin(id, admin);
+      return <Redirect to="/users" />;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div>
       <h1>Here are all the User:</h1>
@@ -29,7 +39,14 @@ const Users = () => {
               <h3>Username:{user.username}</h3>
               <h3>Email:{user.email}</h3>
               <h3>Admin Status:{user.admin.toString()}</h3>
-              <button>Change Admin Status</button>
+              <button
+                type="button"
+                onClick={() => {
+                  handleChangeAdminStatus(user.id, user.admin);
+                }}
+              >
+                Change Admin Status
+              </button>
             </div>
           );
         })}

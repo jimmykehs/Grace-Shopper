@@ -118,7 +118,7 @@ usersRouter.post("/register", async (req, res, next) => {
 });
 
 //Used by admin to toggle isAdmin status
-usersRouter.patch("/:id", requireAdmin, async (req, res, next) => {
+usersRouter.patch("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const { admin } = req.body;
