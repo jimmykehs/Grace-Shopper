@@ -237,7 +237,7 @@ async function getUserByUsername(username) {
   }
 }
 
-async function verifyUniqueUser(username, email, name) {
+async function verifyUniqueUser(username, email) {
   try {
     const {
       rows: [user],
@@ -245,10 +245,9 @@ async function verifyUniqueUser(username, email, name) {
       `
     SELECT * FROM users
     WHERE username = ($1)
-    OR email = ($2)
-    OR name = ($3);
+    OR email = ($2);
   `,
-      [username, email, name]
+      [username, email]
     );
 
     return user;
