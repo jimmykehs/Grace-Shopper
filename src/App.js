@@ -29,7 +29,7 @@ const App = () => {
       <Router>
         <div className="header">
           <h1>UsedEgg</h1>
-          <img src={Egg} />
+          <img className="logo" src={Egg} />
           <div className="userOptions">
             <Link className="userButtons" to="/cart">
               View Cart
@@ -69,7 +69,7 @@ const App = () => {
             ) : null}
           </div>
         </div>
-        <div>
+        <div className="sortProducts">
           <Link className="link" to="/">
             View All Products
           </Link>
