@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getProducts } from "../api";
+import { AddtoCart } from "../Img";
 
 const Headsets = () => {
   const [grabbedHeadsets, setGrabbedHeadsets] = useState();
@@ -21,19 +22,20 @@ const Headsets = () => {
 
   return (
     <div>
-      <h1>Enjoy all the Broken:</h1>
+      <h1 className="Title">Enjoy all the Broken:</h1>
       <div className="productCards">
         {grabbedHeadsets?.map((product, index) => {
           return (
             <div className="product" key={index}>
-              <h2>Product:{product.name}</h2>
               <img
+                className="productImg"
                 src={product.image_url}
                 alt="Some broken computer part"
               ></img>
-              <p>Description: {product.description}</p>
-              <p>Type: {product.type}</p>
-              <h3>Price: {product.price}</h3>
+              <h1 className="name">{product.name}</h1>
+              <p className="description">Description: {product.description}</p>
+              <h3 className="price">Price: ${product.price}</h3>
+              <img className="addToCart" src={AddtoCart} />
             </div>
           );
         })}
