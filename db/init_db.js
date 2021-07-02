@@ -10,6 +10,7 @@ const {
   createUser,
   getAllUsers,
   patchUser,
+  createUserAddress,
   createGuest,
   addProductToCart,
   // addCartToUserOrders,
@@ -26,6 +27,7 @@ async function buildTables() {
         DROP TABLE IF EXISTS user_orders;
         DROP TABLE IF EXISTS user_cart;
         DROP TABLE IF EXISTS guests;
+        DROP TABLE IF EXISTS user_address;
         DROP TABLE IF EXISTS users;
         DROP TABLE IF EXISTS products;
       `);
@@ -42,7 +44,10 @@ async function buildTables() {
       price DECIMAL DEFAULT 0,
       image_url TEXT NOT NULL,
       type VARCHAR(255) NOT NULL,
-      active boolean DEFAULT true
+      in_stock BOOLEAN DEFAULT true,
+      inventory INTEGER NOT NULL,
+      active BOOLEAN DEFAULT true
+      
   );
   
   CREATE TABLE users(
@@ -53,6 +58,17 @@ async function buildTables() {
       name VARCHAR(255) NOT NULL,
       admin BOOLEAN DEFAULT FALSE,
       UNIQUE(username, email)
+  );
+
+  CREATE TABLE user_address(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    street VARCHAR(255) NOT NULL,
+    street_2 VARCHAR(255),
+    state VARCHAR(2) NOT NULL,
+    zip_code INTEGER NOT NULL,
+    UNIQUE(user_id)
+
   );
   
   CREATE TABLE guests(
@@ -111,6 +127,8 @@ const createInitialProducts = async () => {
         image_url:
           "https://c1.neweggimages.com/ProductImageCompressAll1280/26-197-336-V01.jpg",
         type: "mouse",
+        in_stock: true,
+        inventory: 3,
       },
       {
         name: "Anne Pro 2",
@@ -120,6 +138,8 @@ const createInitialProducts = async () => {
         image_url:
           "https://c1.neweggimages.com/ProductImageCompressAll1280/AHB0_132107574488968021cmxMoW9s1f.jpg",
         type: "keyboard",
+        in_stock: false,
+        inventory: 0,
       },
       {
         name: "SteelSeries Rival 310 Gaming Mouse",
@@ -129,6 +149,8 @@ const createInitialProducts = async () => {
         image_url:
           "https://c1.neweggimages.com/ProductImageCompressAll1280/26-249-223-V01.jpg",
         type: "mouse",
+        in_stock: true,
+        inventory: 17,
       },
       {
         name: "Razer Kraken X Gaming Headset",
@@ -139,6 +161,8 @@ const createInitialProducts = async () => {
         image_url:
           "https://images-na.ssl-images-amazon.com/images/I/61QIMDB3YTL._AC_SL1500_.jpg",
         type: "headset",
+        in_stock: true,
+        inventory: 15,
       },
       {
         name: "Logitech G432 Wired Gaming Headset",
@@ -148,6 +172,8 @@ const createInitialProducts = async () => {
         image_url:
           "https://images-na.ssl-images-amazon.com/images/I/61j6ey6mBpL._AC_SL1024_.jpg",
         type: "headset",
+        in_stock: true,
+        inventory: 84,
       },
       {
         name: "Razer Ornata Chroma Gaming Keyboard",
@@ -157,6 +183,8 @@ const createInitialProducts = async () => {
         image_url:
           "https://images-na.ssl-images-amazon.com/images/I/8116DtW4WWL._AC_SL1500_.jpg",
         type: "keyboard",
+        in_stock: true,
+        inventory: 12,
       },
       {
         name: "SteelSeries Arctis 5",
@@ -166,6 +194,8 @@ const createInitialProducts = async () => {
         image_url:
           "https://images-na.ssl-images-amazon.com/images/I/81Y9BnR2%2BhL._AC_SL1500_.jpg",
         type: "headset",
+        in_stock: false,
+        inventory: 0,
       },
     ];
     const products = await Promise.all(productsToCreate.map(createProduct));
@@ -289,9 +319,15 @@ async function testDB() {
     const userOrder = await createUserOrder(2);
     console.log("Results:", userOrder);
 
-    // console.log("Calling addCartProdcutsToOrderProducts");
-    // const orderWithProducts = await addCartProductsToOrderProducts(1, 1, 2);
-    // console.log("Results:", orderWithProducts);
+    console.log("Calling createUserAddress");
+    const userAddress = await createUserAddress({
+      user_id: 1,
+      street: "167 Milky Way Drive",
+      street_2: null,
+      state: "NY",
+      zip_code: "21188",
+    });
+    console.log("Results:", userAddress);
 
     console.log("Finished database tests!");
   } catch (error) {
