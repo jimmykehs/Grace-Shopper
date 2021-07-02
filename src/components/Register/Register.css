@@ -1,0 +1,28 @@
+.register {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 25px;
+  height: 80vh;
+}
+
+.register label {
+  margin-top: 20px;
+}
+
+.register input {
+  padding: 15px;
+  width: 50%;
+  margin: 15px;
+  border: 1px solid #eee;
+  font-size: 1.2rem;
+}
+
+.register button {
+  background-color: #3f3f3f;
+  color: #ececec;
+  padding: 20px;
+  font-size: 1.3rem;
+  width: 25%;
+}

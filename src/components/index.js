@@ -1,8 +1,9 @@
 export { default as App } from "../App";
+export { default as Cart } from "./Cart/Cart";
 export { default as Product } from "./Product/Product";
-export { default as Users } from "./Users";
-export { default as Login } from "./Login";
-export { default as Register } from "./Register";
+export { default as Users } from "./Users/Users";
+export { default as Login } from "./Login/Login.js";
+export { default as Register } from "./Register/Register";
 export { default as Keyboards } from "./Keyboards";
 export { default as Mouse } from "./Mouse";
 export { default as Headsets } from "./Headsets";
