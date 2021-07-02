@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
 import {
+  Cart,
   Product,
   Users,
   Login,
@@ -17,6 +18,7 @@ import "./app.css";
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [admin, setAdmin] = useState(false);
+  const [cart, setCart] = useState([]);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -86,7 +88,10 @@ const App = () => {
         <main>
           <Switch>
             <Route exact path="/">
-              <Product />
+              <Product cart={cart} setCart={setCart} />
+            </Route>
+            <Route exact path="/cart">
+              <Cart cart={cart} setCart={setCart} loggedIn={loggedIn} />
             </Route>
             <Route exact path="/keyboard">
               <Keyboards />

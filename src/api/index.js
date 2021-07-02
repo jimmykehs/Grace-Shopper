@@ -99,3 +99,59 @@ export async function createProduct(name, description, price, image_url, type) {
     throw error;
   }
 }
+
+export async function getCart(token) {
+  try {
+    const { data } = await axios.get("/api/cart", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Error getting cart");
+  }
+}
+
+export async function updateProductQuantity(product_id, quantity, token) {
+  try {
+    const { data } = await axios.patch(
+      `/api/cart/${product_id}`,
+      { quantity },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    console.error("Error updating quantity");
+  }
+}
+
+export async function removeItemFromCart(product_id, token) {
+  try {
+    const { data } = await axios.delete(`api/cart/${product_id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return data;
+  } catch (error) {
+    console.error("Error removing from cart");
+  }
+}
+
+export async function addItemToCart(product_id, quantity, token) {
+  try {
+    const { data } = await axios.post(
+      `api/cart`,
+      { product_id, quantity },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+  } catch (error) {
+    console.error("Error adding to cart");
+  }
+}

@@ -456,7 +456,7 @@ async function getUserById(user_id) {
 
     const { rows: products } = await client.query(
       `
-      SELECT products.*
+      SELECT products.*, cart_products.quantity
       FROM products
       JOIN cart_products ON products.id=cart_products.product_id
       JOIN user_cart ON cart_products.user_cart_id=user_cart.id
@@ -521,6 +521,7 @@ async function updateProductQuantity(user_id, product_id, quantity) {
     `,
       [quantity, userCart[0].id, product_id]
     );
+    console.log("UPDATED", updatedProduct);
     return updatedProduct;
   } catch (error) {
     console.log(error);
