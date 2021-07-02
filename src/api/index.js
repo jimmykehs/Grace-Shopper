@@ -12,6 +12,14 @@ export const getToken = () => {
   return localStorage.getItem("token");
 };
 
+export const loggedAdmin = () => {
+  localStorage.setItem("admin", "isAdmin");
+};
+
+export const clearAdmin = () => {
+  localStorage.removeItem("admin");
+};
+
 export async function getProducts() {
   try {
     const { data } = await axios.get("/api/products");
@@ -57,7 +65,7 @@ export async function userRegister(name, email, username, password) {
       password,
     });
     if (data.token) {
-      alert("You have successfully registered!");
+      // alert("You have successfully registered!");
       setToken(data.token);
     }
     return data;

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
-import { userLogin } from "../../api";
+import { userLogin, loggedAdmin } from "../../api";
 import "./Login.css";
 
 const Login = (props) => {
-  const { setLoggedIn, setAdmin, message, setMessage } = props;
+  const { setLoggedIn, setAdmin } = props;
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -32,6 +32,9 @@ const Login = (props) => {
           try {
             let submit = await userLogin(username, password);
             setAdmin(submit.user.admin);
+            if (submit.user.admin === true) {
+              loggedAdmin();
+            }
 
             if (submit.name) {
               alert(submit.message);
