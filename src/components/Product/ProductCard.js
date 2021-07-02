@@ -2,7 +2,7 @@ import React from "react";
 import { addItemToCart } from "../../api";
 import { AddtoCart } from "../../Img";
 
-const ProductCard = ({ index, product, cart }) => {
+const ProductCard = ({ index, product, cart, setCart }) => {
   const token = localStorage.getItem("token");
   const handleAddtoCart = async () => {
     if (token) {
@@ -19,6 +19,7 @@ const ProductCard = ({ index, product, cart }) => {
       product.quantity = 1;
       cart.push(product);
     }
+
     alert(`${product.name} added to cart!`);
   };
   return (
