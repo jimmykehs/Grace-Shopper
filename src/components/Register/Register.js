@@ -1,16 +1,33 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
-import { userLogin } from "../api";
+import { userRegister } from "../../api";
+import "./Register.css";
 
-const Login = (props) => {
-  const { setLoggedIn, setAdmin, message, setMessage } = props;
+const Register = (props) => {
+  const { setLoggedIn } = props;
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
   return (
-    <form className="login" onSubmit={(event) => event.preventDefault()}>
-      <h1>Login:</h1>
+    <form className="register" onSubmit={(event) => event.preventDefault()}>
+      <h1>Register:</h1>
+      <label>Name:</label>
+      <input
+        type="text"
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+        placeholder=""
+      />
+      <label>Email:</label>
+      <input
+        type="text"
+        value={email}
+        onChange={(event) => setEmail(event.target.value)}
+        placeholder=""
+      />
       <label>Username:</label>
       <input
         type="text"
@@ -29,11 +46,9 @@ const Login = (props) => {
         onClick={async (event) => {
           event.preventDefault();
           try {
-            let submit = await userLogin(username, password);
-            setAdmin(submit.user.admin);
-
-            if (submit.error) {
-              alert("There was an error logging in...");
+            let submit = await userRegister(name, email, username, password);
+            if (submit.message) {
+              alert(submit.message);
             } else {
               setLoggedIn(true);
               return <Redirect to="/" />;
@@ -43,10 +58,10 @@ const Login = (props) => {
           }
         }}
       >
-        Login
+        Register
       </button>
     </form>
   );
 };
 
-export default Login;
+export default Register;
