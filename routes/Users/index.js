@@ -10,7 +10,6 @@ const {
   createUser,
   getUserByUsername,
   verifyUniqueUser,
-  client,
 } = require("../../db");
 const { patchUser } = require("../../db/users/index.js");
 
@@ -69,26 +68,18 @@ usersRouter.post("/register", async (req, res, next) => {
   const { username, password, email, name } = req.body;
 
   try {
-    const existingUser = await verifyUniqueUser(username, email, name);
+    const existingUser = await verifyUniqueUser(username, email);
 
     if (existingUser != undefined) {
-      console.log("User exists");
       if (existingUser.username === username) {
         next({
           name: "DuplicateUsername",
           message: "This username is already in use",
         });
-      }
-      if (existingUser.email === email) {
+      } else if (existingUser.email === email) {
         next({
           name: "DuplicateEmail",
           message: "This email is already in use!",
-        });
-      }
-      if (existingUser.name === name) {
-        next({
-          name: "DuplicateName",
-          message: "Someone already has your name. Get a new one",
         });
       }
     } else {
@@ -125,6 +116,7 @@ usersRouter.patch("/:id", async (req, res, next) => {
     const fields = {
       admin,
     };
+    console.log(admin);
     const updatedUser = await patchUser(id, fields);
     res.send(updatedUser);
   } catch (error) {
