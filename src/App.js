@@ -11,7 +11,7 @@ import {
   Headsets,
   CreateProduct,
 } from "./components";
-import { clearToken } from "./api";
+import { clearToken, clearAdmin } from "./api";
 import { Egg } from "./Img";
 import "./app.css";
 
@@ -25,6 +25,12 @@ const App = () => {
       setLoggedIn(true);
     }
   }, [setLoggedIn]);
+
+  useEffect(() => {
+    if (localStorage.getItem("admin")) {
+      setAdmin(true);
+    }
+  });
 
   return (
     <div className="App">
@@ -61,7 +67,9 @@ const App = () => {
                 className="userButtons"
                 onClick={() => {
                   clearToken();
+                  clearAdmin();
                   setLoggedIn(false);
+                  setAdmin(false);
                   alert("You have logged out");
                 }}
                 to="/"

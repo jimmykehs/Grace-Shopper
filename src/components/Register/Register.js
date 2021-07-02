@@ -47,10 +47,11 @@ const Register = (props) => {
           event.preventDefault();
           try {
             let submit = await userRegister(name, email, username, password);
-            if (submit.message) {
+            if (submit.name) {
               alert(submit.message);
             } else {
               setLoggedIn(true);
+              alert(submit.message);
               return <Redirect to="/" />;
             }
           } catch (error) {
