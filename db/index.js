@@ -36,7 +36,15 @@ const db = pgp(DB_URL);
 
 // PRODUCTS
 
-const createProduct = async ({ name, description, price, image_url, type }) => {
+const createProduct = async ({
+  name,
+  description,
+  price,
+  image_url,
+  type,
+  in_stock,
+  inventory,
+}) => {
   try {
     const {
       rows: [products],
@@ -47,13 +55,15 @@ const createProduct = async ({ name, description, price, image_url, type }) => {
               description,
               price,
               image_url,
-              type
+              type,
+              in_stock,
+              inventory
               )
-            VALUES($1, $2, $3, $4, $5)
+            VALUES($1, $2, $3, $4, $5, $6, $7)
             ON CONFLICT (name) DO NOTHING
             RETURNING *;
          `,
-      [name, description, price, image_url, type]
+      [name, description, price, image_url, type, in_stock, inventory]
     );
     return products;
   } catch (err) {
@@ -280,6 +290,53 @@ async function patchUser(user_id, fields = {}) {
   }
 }
 
+// USER ADDRESS
+
+async function createUserAddress({
+  user_id,
+  street,
+  street_2,
+  state,
+  zip_code,
+}) {
+  try {
+    await client.query(
+      `
+    INSERT INTO user_address(
+      user_id, street, street_2, state, zip_code
+      )
+    VALUES($1, $2, $3, $4, $5)
+    ON CONFLICT (user_id) DO NOTHING
+    RETURNING *
+  `,
+      [user_id, street, street_2, state, zip_code]
+    );
+
+    return await joinAddressToUser(user_id);
+  } catch (err) {
+    console.error("Could not create user address!");
+    throw err;
+  }
+}
+
+async function joinAddressToUser(user_id) {
+  try {
+    const { rows: userWithAddress } = await client.query(
+      `
+      SELECT users.id
+    FROM users
+    INNER JOIN user_address ON user_id = users.id
+    WHERE user_address.user_id = $1
+    `,
+      [user_id]
+    );
+    return userWithAddress;
+  } catch (err) {
+    console.error("Could not join address to user");
+    throw err;
+  }
+}
+
 // GUESTS
 
 const createGuest = async ({ email, name, cart = [] }) => {
@@ -464,7 +521,6 @@ async function getUserById(user_id) {
     `,
       [user_id]
     );
-    console.log(products, "PRODUCCCCCCTS");
     user.cart = products;
     const { rows: orderProducts } = await client.query(
       `
@@ -476,8 +532,25 @@ async function getUserById(user_id) {
     `,
       [user_id]
     );
+    if (orderProducts) {
+      user.order = orderProducts;
+    } else {
+      user.order = [];
+    }
 
-    user.order = orderProducts;
+    const { rows: address } = await client.query(
+      `
+      SELECT user_address.*
+    FROM user_address
+    INNER JOIN users ON users.id = user_address.id
+    WHERE user_address.user_id = $1
+    `,
+      [user_id]
+    );
+
+    if (address) {
+      user.address = address;
+    }
 
     return user;
   } catch (error) {
@@ -641,6 +714,7 @@ module.exports = {
   getUserByUsername,
   verifyUniqueUser,
   patchUser,
+  createUserAddress,
   createGuest,
   addProductToCart,
   // addCartToUserOrders,
