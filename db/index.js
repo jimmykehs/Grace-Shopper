@@ -513,7 +513,7 @@ async function getUserById(user_id) {
 
     const { rows: products } = await client.query(
       `
-      SELECT products.*, cart_products.quantity
+      SELECT *
       FROM products
       JOIN cart_products ON products.id=cart_products.product_id
       JOIN user_cart ON cart_products.user_cart_id=user_cart.id
@@ -642,10 +642,21 @@ async function addCartProductsToOrderProducts(cart_id, order_id) {
     // console.log(cart_id, "CART ID");
     // console.log(cartProducts, "CART PRODUCTS");
     await bulkUpdateOrderProducts(order_id, cartProducts);
+    await removeCartItemsOnOrder(cart_id);
   } catch (err) {
     console.error("Can not add cart product to order product!");
     throw err;
   }
+}
+
+async function removeCartItemsOnOrder(cart_id) {
+  await client.query(
+    `
+    DELETE FROM cart_products
+    WHERE user_cart_id = $1
+  `,
+    [cart_id]
+  );
 }
 
 async function bulkUpdateOrderProducts(order_id, cartProducts) {

@@ -315,6 +315,10 @@ async function testDB() {
     const userWithSecondProduct = await addProductToCart(2, 1, 2);
     console.log("Result:", userWithSecondProduct);
 
+    console.log("Calling addProductToCart For Different User");
+    const secondUserWithProducts = await addProductToCart(3, 5, 2);
+    console.log("Result:", secondUserWithProducts);
+
     console.log("Calling createUserOrder");
     const userOrder = await createUserOrder(2);
     console.log("Results:", userOrder);
