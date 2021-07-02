@@ -35,7 +35,7 @@
 }
 
 .userButtons:hover {
-  background: #3f3f3f;
+  background: rgb(116, 116, 116);
   color: white;
 }
 
