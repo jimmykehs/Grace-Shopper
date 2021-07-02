@@ -1,10 +1,10 @@
 import { get } from "http";
 import React, { useState, useEffect } from "react";
+import { AddtoCart } from "../../Img";
 import { getProducts } from "../../api";
 import "./Product.css";
-import ProductCard from "./ProductCard";
 
-const Products = ({ cart, setCart }) => {
+const Products = () => {
   const [grabbedProducts, setGrabbedProducts] = useState();
 
   const getAllProducts = async () => {
@@ -23,9 +23,19 @@ const Products = ({ cart, setCart }) => {
     <div>
       <h1 className="Title">Enjoy all the Broken:</h1>
       <div className="productCards">
-        {grabbedProducts?.map((product) => {
+        {grabbedProducts?.map((product, index) => {
           return (
-            <ProductCard product={product} cart={cart} setCart={setCart} />
+            <div className="product" key={index}>
+              <img
+                className="productImg"
+                src={product.image_url}
+                alt="Some broken computer part"
+              ></img>
+              <h1 className="name">{product.name}</h1>
+              <p className="description">Description: {product.description}</p>
+              <h3 className="price">Price: ${product.price}</h3>
+              <img className="addToCart" src={AddtoCart} />
+            </div>
           );
         })}
       </div>

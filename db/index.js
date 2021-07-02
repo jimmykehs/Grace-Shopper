@@ -237,7 +237,7 @@ async function getUserByUsername(username) {
   }
 }
 
-async function verifyUniqueUser(username, email) {
+async function verifyUniqueUser(username, email, name) {
   try {
     const {
       rows: [user],
@@ -245,9 +245,10 @@ async function verifyUniqueUser(username, email) {
       `
     SELECT * FROM users
     WHERE username = ($1)
-    OR email = ($2);
+    OR email = ($2)
+    OR name = ($3);
   `,
-      [username, email]
+      [username, email, name]
     );
 
     return user;
@@ -456,7 +457,7 @@ async function getUserById(user_id) {
 
     const { rows: products } = await client.query(
       `
-      SELECT products.*, cart_products.quantity
+      SELECT products.*
       FROM products
       JOIN cart_products ON products.id=cart_products.product_id
       JOIN user_cart ON cart_products.user_cart_id=user_cart.id
@@ -521,7 +522,6 @@ async function updateProductQuantity(user_id, product_id, quantity) {
     `,
       [quantity, userCart[0].id, product_id]
     );
-    console.log("UPDATED", updatedProduct);
     return updatedProduct;
   } catch (error) {
     console.log(error);
