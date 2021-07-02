@@ -2,14 +2,24 @@ import React from "react";
 import { addItemToCart } from "../../api";
 import { AddtoCart } from "../../Img";
 
-const ProductCard = ({ product, cart, setCart }) => {
+const ProductCard = ({ index, product, cart, setCart }) => {
   const token = localStorage.getItem("token");
   const handleAddtoCart = async () => {
     if (token) {
       await addItemToCart(product.id, 1, token);
     }
-    product.quantity = 1;
-    cart.push(product);
+    const existingProductInCart = cart.find(
+      (element) => element.name === product.name
+    );
+    console.log(existingProductInCart);
+    if (existingProductInCart) {
+      existingProductInCart.quantity += 1;
+      cart.splice(index, 1, existingProductInCart);
+    } else {
+      product.quantity = 1;
+      cart.push(product);
+    }
+
     alert(`${product.name} added to cart!`);
   };
   return (

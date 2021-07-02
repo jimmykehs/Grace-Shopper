@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { AddtoCart } from "../Img";
 import { getProducts } from "../api";
+import ProductCard from "./Product/ProductCard";
 
-const Keyboards = () => {
+const Keyboards = ({ cart }) => {
   const [grabbedKeyboards, setGrabbedKeyboards] = useState();
 
   const getAllKeyboards = async () => {
@@ -27,17 +28,12 @@ const Keyboards = () => {
       <div className="productCards">
         {grabbedKeyboards?.map((product, index) => {
           return (
-            <div className="product" key={index}>
-              <img
-                className="productImg"
-                src={product.image_url}
-                alt="Some broken computer part"
-              ></img>
-              <h1 className="name">{product.name}</h1>
-              <p className="description">Description: {product.description}</p>
-              <h3 className="price">Price: ${product.price}</h3>
-              <img className="addToCart" src={AddtoCart} />
-            </div>
+            <ProductCard
+              key={index}
+              product={product}
+              index={index}
+              cart={cart}
+            />
           );
         })}
       </div>

@@ -94,13 +94,13 @@ const App = () => {
               <Cart cart={cart} setCart={setCart} loggedIn={loggedIn} />
             </Route>
             <Route exact path="/keyboard">
-              <Keyboards />
+              <Keyboards cart={cart} />
             </Route>
             <Route exact path="/mouse">
-              <Mouse />
+              <Mouse cart={cart} />
             </Route>
             <Route exact path="/headsets">
-              <Headsets />
+              <Headsets cart={cart} />
             </Route>
             <Route exact path="/users">
               <Users />
