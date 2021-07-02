@@ -222,21 +222,21 @@ const createInitialUsers = async () => {
     const usersToCreate = [
       {
         username: "BrianPython",
-        password: "AjaxDestroyer44",
+        password: bcrypt.hashSync("AjaxDestroyer44", 10),
         email: "brian_p@gmail.com",
         name: "Brian Pollygren",
         // cart: ["product 1"],
       },
       {
         username: "Shyguy666",
-        password: "appleBoy24",
+        password: bcrypt.hashSync("appleBoy24", 10),
         email: "shyguy666@yahoo.com",
         name: "Erin Naples",
         // cart: ["product 3"],
       },
       {
         username: "Jessica.Troy",
-        password: "AriGorn7747",
+        password: bcrypt.hashSync("AriGorn7747", 10),
         email: "jessica.troy@gmail.com",
         name: "Jessica Troy",
         // cart: [],
