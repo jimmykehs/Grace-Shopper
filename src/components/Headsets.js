@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { getProducts } from "../api";
 import { AddtoCart } from "../Img";
+import ProductCard from "./Product/ProductCard";
 
-const Headsets = () => {
+const Headsets = ({ cart }) => {
   const [grabbedHeadsets, setGrabbedHeadsets] = useState();
 
   const getAllHeadsets = async () => {
@@ -26,17 +27,12 @@ const Headsets = () => {
       <div className="productCards">
         {grabbedHeadsets?.map((product, index) => {
           return (
-            <div className="product" key={index}>
-              <img
-                className="productImg"
-                src={product.image_url}
-                alt="Some broken computer part"
-              ></img>
-              <h1 className="name">{product.name}</h1>
-              <p className="description">Description: {product.description}</p>
-              <h3 className="price">Price: ${product.price}</h3>
-              <img className="addToCart" src={AddtoCart} />
-            </div>
+            <ProductCard
+              key={index}
+              product={product}
+              index={index}
+              cart={cart}
+            />
           );
         })}
       </div>

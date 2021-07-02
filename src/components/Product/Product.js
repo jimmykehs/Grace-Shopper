@@ -23,10 +23,8 @@ const Products = ({ cart, setCart }) => {
     <div>
       <h1 className="Title">Enjoy all the Broken:</h1>
       <div className="productCards">
-        {grabbedProducts?.map((product) => {
-          return (
-            <ProductCard product={product} cart={cart} setCart={setCart} />
-          );
+        {grabbedProducts?.map((product, index) => {
+          return <ProductCard index={index} product={product} cart={cart} />;
         })}
       </div>
     </div>
