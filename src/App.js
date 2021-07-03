@@ -23,6 +23,12 @@ const App = () => {
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
+    if (localStorage.getItem("Cart")) {
+      setCart(JSON.parse(localStorage.getItem("Cart")));
+    }
+  }, []);
+
+  useEffect(() => {
     if (localStorage.getItem("token")) {
       setLoggedIn(true);
     }
@@ -33,6 +39,9 @@ const App = () => {
       setAdmin(true);
     }
   });
+  useEffect(() => {
+    localStorage.setItem("Cart", JSON.stringify(cart));
+  }, [cart]);
 
   return (
     <div className="App">
