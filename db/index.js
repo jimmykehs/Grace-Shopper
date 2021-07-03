@@ -42,8 +42,8 @@ const createProduct = async ({
   price,
   image_url,
   type,
-  in_stock,
-  inventory,
+  in_stock = true,
+  inventory = 100,
 }) => {
   try {
     const {

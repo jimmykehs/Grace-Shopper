@@ -32,7 +32,6 @@ export async function getProducts() {
 export async function getUsers() {
   try {
     const { data } = await axios.get("/api/users");
-    console.log(data.users);
     return data.users;
   } catch (error) {
     throw error;
@@ -79,13 +78,7 @@ export async function changeAdmin(id, admin) {
     let updatedInfo = {
       admin,
     };
-    // let adminStatus = prompt(
-    //   "What would you like to change the admin status to?",
-    //   admin
-    // );
-
     const { data } = await axios.patch(`/api/users/${id}`, updatedInfo);
-    console.log(data);
     return data;
   } catch (error) {
     throw error;
@@ -115,7 +108,6 @@ export async function getCart(token) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(data);
     return data;
   } catch (error) {
     console.error("Error getting cart");

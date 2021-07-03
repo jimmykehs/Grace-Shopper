@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { AddtoCart } from "../Img";
 import { getProducts } from "../api";
 import ProductCard from "./Product/ProductCard";
 

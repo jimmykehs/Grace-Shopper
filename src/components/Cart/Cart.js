@@ -10,7 +10,6 @@ const Cart = ({ cart, setCart }) => {
   useEffect(() => {
     async function fetchCart(token) {
       const fetchedCart = await getCart(token);
-      console.log(fetchedCart);
       setCart(fetchedCart);
     }
     if (token) {

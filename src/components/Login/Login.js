@@ -31,14 +31,15 @@ const Login = (props) => {
           event.preventDefault();
           try {
             let submit = await userLogin(username, password);
-            setAdmin(submit.user.admin);
-            if (submit.user.admin === true) {
-              loggedAdmin();
-            }
+            console.log(submit);
 
             if (submit.name) {
               alert(submit.message);
             } else {
+              if (submit.user.admin === true) {
+                loggedAdmin();
+              }
+              setAdmin(submit.user.admin);
               setLoggedIn(true);
               return <Redirect to="/" />;
             }
