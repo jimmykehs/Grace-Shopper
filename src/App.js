@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
+import { stack as Menu } from "react-burger-menu";
+
 import {
   Cart,
   Product,
@@ -35,48 +37,53 @@ const App = () => {
   return (
     <div className="App">
       <Router>
-        <div className="header">
-          <h1>UsedEgg</h1>
-          <img className="logo" src={Egg} />
-          <div className="userOptions">
-            <Link className="userButtons" to="/cart">
-              View Cart
+        <Menu right>
+          <h1>Options:</h1>
+          <Link className="userButtons" to="/cart">
+            View Cart
+          </Link>
+          {!loggedIn ? (
+            <Link className="userButtons" to="/register">
+              Sign Up
             </Link>
-            {!loggedIn ? (
-              <Link className="userButtons" to="/register">
-                Sign Up
-              </Link>
-            ) : null}
-            {!loggedIn ? (
-              <Link className="userButtons" to="/login">
-                Login
-              </Link>
-            ) : null}
-            {admin ? (
-              <Link className="userButtons" to="/create-product">
-                Create Product
-              </Link>
-            ) : null}
-            {admin ? (
-              <Link className="userButtons" to="/users">
-                View Users
-              </Link>
-            ) : null}
-            {loggedIn ? (
-              <Link
-                className="userButtons"
-                onClick={() => {
-                  clearToken();
-                  clearAdmin();
-                  setLoggedIn(false);
-                  setAdmin(false);
-                  alert("You have logged out");
-                }}
-                to="/"
-              >
-                Logout
-              </Link>
-            ) : null}
+          ) : null}
+          {!loggedIn ? (
+            <Link className="userButtons" to="/login">
+              Login
+            </Link>
+          ) : null}
+          {admin ? (
+            <Link className="userButtons" to="/create-product">
+              Create Product
+            </Link>
+          ) : null}
+          {admin ? (
+            <Link className="userButtons" to="/users">
+              View Users
+            </Link>
+          ) : null}
+          {loggedIn ? (
+            <Link
+              className="userButtons"
+              onClick={() => {
+                clearToken();
+                clearAdmin();
+                setLoggedIn(false);
+                setAdmin(false);
+                alert("You have logged out");
+              }}
+              to="/"
+            >
+              Logout
+            </Link>
+          ) : null}
+        </Menu>
+        <div className="header">
+          <div>
+            <h1>UsedEgg</h1>
+          </div>
+          <div className="logo-container">
+            <img className="logo" src={Egg} />
           </div>
         </div>
         <div className="sortProducts">
