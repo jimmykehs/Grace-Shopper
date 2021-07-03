@@ -11,7 +11,7 @@ const {
   getUserByUsername,
   verifyUniqueUser,
 } = require("../../db");
-const { patchUser } = require("../../db/users/index.js");
+const { patchUser } = require("../../db");
 
 //Getting all users
 usersRouter.get("/", async (_, res, next) => {
