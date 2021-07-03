@@ -9,7 +9,7 @@ const pgp = require("pg-promise")({
 });
 const db = pgp(DB_URL);
 
-// PRODUCTS
+//////////////////// PRODUCT QUERIES ////////////////////
 
 async function createProduct({
   name,
@@ -156,7 +156,7 @@ async function getProductByType(type) {
   }
 }
 
-// USERS FUNCTIONS
+//////////////////// USER QUERIES ////////////////////
 
 async function createUser({ username, password, email, name, admin = false }) {
   try {
@@ -259,7 +259,7 @@ async function patchUser(user_id, fields = {}) {
   }
 }
 
-// USER ADDRESS
+//////////////////// USER ADDRESS QUERIES ////////////////////
 
 async function createUserAddress({
   user_id,
@@ -306,22 +306,22 @@ async function joinAddressToUser(user_id) {
   }
 }
 
-// GUESTS
+//////////////////// GUESTS QUERIES ////////////////////
 
-async function createGuest({ email, name, cart = [] }) {
+async function createGuest({ email, name }) {
   try {
     const {
       rows: [guests],
     } = await client.query(
       `
             INSERT INTO guests(
-              email, name, cart
+              email, name
               )
-            VALUES($1, $2, $3)
+            VALUES($1, $2)
             ON CONFLICT (email) DO NOTHING
             RETURNING *;
          `,
-      [email, name, cart]
+      [email, name]
     );
 
     return guests;
@@ -331,9 +331,8 @@ async function createGuest({ email, name, cart = [] }) {
   }
 }
 
-// USER CART
+//////////////////// USER CART QUERIES ////////////////////
 
-//createPostTag
 async function createCartItem(user_id, product_id, quantity) {
   try {
     let userCart = await getCartByUserId(user_id);
@@ -570,7 +569,7 @@ async function updateProductQuantity(user_id, product_id, quantity) {
     throw error;
   }
 }
-// ORDERS
+//////////////////// ORDERS QUERIES ////////////////////
 
 async function createUserOrder(user_id) {
   try {
@@ -687,7 +686,6 @@ module.exports = {
   createUserAddress,
   createGuest,
   addProductToCart,
-  // addCartToUserOrders,
   createUserOrder,
   createCartItem,
   addCartProductsToOrderProducts,
