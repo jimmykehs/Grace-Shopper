@@ -2,6 +2,7 @@ const apiRouter = require("express").Router();
 const usersRouter = require("./Users");
 const productsRouter = require("./Products");
 const cartRouter = require("./Cart");
+const orderRouter = require("./Order");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
@@ -46,6 +47,7 @@ apiRouter.use((req, res, next) => {
 apiRouter.use("/users", usersRouter);
 apiRouter.use("/products", productsRouter);
 apiRouter.use("/cart", cartRouter);
+apiRouter.use("/order", orderRouter);
 
 apiRouter.use((error, req, res, next) => {
   res.send(error);

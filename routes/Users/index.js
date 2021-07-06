@@ -10,6 +10,7 @@ const {
   createUser,
   getUserByUsername,
   verifyUniqueUser,
+  deleteUser,
 } = require("../../db");
 const { patchUser } = require("../../db/users/index.js");
 
@@ -142,6 +143,12 @@ usersRouter.patch("/me/:id", authUser, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+usersRouter.delete("/:id", requireAdmin, async (req, res, next) => {
+  const { id } = req.params;
+  const deletedUser = await deleteUser(id);
+  res.send(deletedUser);
 });
 
 module.exports = usersRouter;

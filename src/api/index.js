@@ -155,3 +155,23 @@ export async function addItemToCart(product_id, quantity, token) {
     console.error("Error adding to cart");
   }
 }
+
+export async function checkoutUser(cart) {
+  try {
+    const { data } = await axios.post("api/cart/checkout", cart);
+    return data;
+  } catch (error) {
+    console.error("Oops");
+  }
+}
+
+export async function removeUser(id, token) {
+  try {
+    const { data } = await axios.delete(`/api/users/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return data;
+  } catch (error) {
+    console.error("Error removing user");
+  }
+}

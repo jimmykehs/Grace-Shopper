@@ -290,6 +290,19 @@ async function patchUser(user_id, fields = {}) {
   }
 }
 
+async function deleteUser(id) {
+  const {
+    rows: [user],
+  } = await client.query(
+    `
+   DELETE FROM users
+   WHERE id = $1
+  `,
+    [id]
+  );
+  return user;
+}
+
 // USER ADDRESS
 
 async function createUserAddress({
@@ -734,5 +747,6 @@ module.exports = {
   addCartProductsToOrderProducts,
   deleteCartItem,
   updateProductQuantity,
+  deleteUser,
   // db methods
 };

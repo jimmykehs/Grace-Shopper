@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getCart } from "../../api";
 import CartItem from "./CartItem";
 import "./Cart.css";
+import { checkoutUser } from "../../api";
 const Cart = ({ cart, setCart }) => {
   const [forceUpdate, setForceUpdate] = useState(true);
   const token = localStorage.getItem("token");
@@ -16,6 +17,11 @@ const Cart = ({ cart, setCart }) => {
       fetchCart(token);
     }
   }, []);
+
+  const checkout = async () => {
+    const url = await checkoutUser(cart);
+    window.location = url;
+  };
 
   return (
     <div className="CartCards">
@@ -34,7 +40,14 @@ const Cart = ({ cart, setCart }) => {
       })}
       <div className="Checkout-Container">
         <h1 className="TotalPrice">TOTAL: ${total.toFixed(2)}</h1>
-        <button className="CheckoutBtn">Checkout</button>
+        <button
+          className="CheckoutBtn"
+          onClick={() => {
+            checkout();
+          }}
+        >
+          Checkout
+        </button>
       </div>
     </div>
   );

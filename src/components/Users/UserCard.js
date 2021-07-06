@@ -1,9 +1,17 @@
 import React, { useState } from "react";
-import { changeAdmin } from "../../api";
+import { changeAdmin, removeUser } from "../../api";
 import { Redirect } from "react-router-dom";
 
 const UserCard = ({ user, index }) => {
   const [admin, setAdmin] = useState(user.admin);
+  const deleteUser = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await removeUser(id, token);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const handleChangeAdminStatus = async (id, admin) => {
     try {
       await changeAdmin(id, admin);
@@ -26,6 +34,13 @@ const UserCard = ({ user, index }) => {
         }}
       >
         Change Admin Status
+      </button>
+      <button
+        onClick={() => {
+          deleteUser(user.id);
+        }}
+      >
+        Delete User
       </button>
     </div>
   );

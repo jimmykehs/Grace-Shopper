@@ -1,5 +1,8 @@
 const express = require("express");
 const cartRouter = express.Router();
+const Stripe = require("stripe");
+const stripe = Stripe(`${process.env.STRIPE_API_KEY}`);
+const cors = require("cors");
 const { requireUser } = require("../Utils/utils.js");
 const {
   addProductToCart,
@@ -36,6 +39,33 @@ cartRouter.patch("/:productId", requireUser, async (req, res, next) => {
   console.log(id, productId, quantity);
   const updatedItem = await updateProductQuantity(id, productId, quantity);
   res.send(updatedItem);
+});
+
+cartRouter.post("/checkout", async (req, res) => {
+  const cartItems = req.body;
+  const line_items = [];
+  cartItems.forEach((item) => {
+    const { name, price, quantity } = item;
+    const formatPrice = parseInt(price.replace(".", ""));
+    line_items.push({
+      price_data: {
+        currency: "usd",
+        product_data: {
+          name,
+        },
+        unit_amount: formatPrice,
+      },
+      quantity,
+    });
+  });
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    line_items,
+    mode: "payment",
+    success_url: "http://localhost:3000/",
+    cancel_url: "http://localhost:3000/cart",
+  });
+  res.send(session.url);
 });
 
 module.exports = cartRouter;

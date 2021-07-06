@@ -62,7 +62,7 @@ async function buildTables() {
 
   CREATE TABLE user_address(
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     street VARCHAR(255) NOT NULL,
     street_2 VARCHAR(255),
     state VARCHAR(2) NOT NULL,
@@ -80,30 +80,30 @@ async function buildTables() {
   
   CREATE TABLE user_cart(
       id SERIAL PRIMARY KEY,
-      user_id INTEGER REFERENCES users(id),
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
       active BOOLEAN DEFAULT TRUE,
       UNIQUE(user_id)
   ); 
   
   CREATE TABLE user_orders(
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
-    user_cart_id INTEGER REFERENCES user_cart(id),
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    user_cart_id INTEGER REFERENCES user_cart(id) ON DELETE CASCADE,
     UNIQUE(user_id, user_cart_id)
 );
 
   CREATE TABLE cart_products(
       id SERIAL PRIMARY KEY,
-      "user_cart_id" INTEGER REFERENCES user_cart(id),
-      "product_id" INTEGER REFERENCES products(id),
+      "user_cart_id" INTEGER REFERENCES user_cart(id) ON DELETE CASCADE,
+      "product_id" INTEGER REFERENCES products(id) ON DELETE CASCADE,
       quantity INTEGER NOT NULL,
       active BOOLEAN DEFAULT TRUE,
       UNIQUE("user_cart_id", "product_id")
   ); 
   CREATE TABLE order_products(
     id SERIAL PRIMARY KEY,
-    order_id INTEGER REFERENCES user_orders(id),
-    product_id INTEGER REFERENCES products(id),
+    order_id INTEGER REFERENCES user_orders(id) ON DELETE CASCADE,
+    product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
     quantity INTEGER NOT NULL
     
   )

@@ -31,7 +31,6 @@ const Login = (props) => {
           event.preventDefault();
           try {
             let submit = await userLogin(username, password);
-            console.log(submit);
 
             if (submit.name) {
               alert(submit.message);
