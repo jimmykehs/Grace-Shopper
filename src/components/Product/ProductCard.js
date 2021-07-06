@@ -19,7 +19,7 @@ const ProductCard = ({ index, product, cart, setCart }) => {
       product.quantity = 1;
       cart.push(product);
     }
-
+    localStorage.setItem("Cart", JSON.stringify(cart));
     alert(`${product.name} added to cart!`);
   };
   return (

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { createProduct } from "../api";
+import "./CreateProduct.css";
 
 const CreateProduct = () => {
   const [name, setName] = useState(null);
@@ -21,7 +22,10 @@ const CreateProduct = () => {
     <div className="form-container">
       <h1 className="form-header">CREATE NEW PRODUCT</h1>
       <div>
-        <form>
+        <form
+          className="create-product"
+          onSubmit={(event) => event.preventDefault()}
+        >
           <input
             placeholder="Name..."
             required
@@ -47,7 +51,7 @@ const CreateProduct = () => {
           />
 
           <input
-            placeholder="Type(Mouse, Keyboard, Headset)"
+            placeholder="Type(mouse, keyboard, headset)"
             required
             onChange={(event) => setType(event.target.value)}
           />
