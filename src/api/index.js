@@ -32,6 +32,7 @@ export async function getProducts() {
 export async function getUsers() {
   try {
     const { data } = await axios.get("/api/users");
+    console.log(data.users);
     return data.users;
   } catch (error) {
     throw error;
@@ -78,7 +79,13 @@ export async function changeAdmin(id, admin) {
     let updatedInfo = {
       admin,
     };
+    // let adminStatus = prompt(
+    //   "What would you like to change the admin status to?",
+    //   admin
+    // );
+
     const { data } = await axios.patch(`/api/users/${id}`, updatedInfo);
+    console.log(data);
     return data;
   } catch (error) {
     throw error;
@@ -108,6 +115,7 @@ export async function getCart(token) {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log(data);
     return data;
   } catch (error) {
     console.error("Error getting cart");
@@ -151,6 +159,7 @@ export async function addItemToCart(product_id, quantity, token) {
       { product_id, quantity },
       { headers: { Authorization: `Bearer ${token}` } }
     );
+    return data;
   } catch (error) {
     console.error("Error adding to cart");
   }
@@ -174,4 +183,33 @@ export async function removeUser(id, token) {
   } catch (error) {
     console.error("Error removing user");
   }
+}
+
+export async function getUser(token) {
+  try {
+    const userData = await axios.get("/api/users/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return userData;
+  } catch (error) {
+    console.error("Error getting user");
+  }
+}
+
+export async function createUserOrder(token) {
+  const order = await axios.post(
+    "/api/order",
+    {},
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return order;
+}
+
+export async function getAllUserOrders(token) {
+  const order = await axios.get("/api/order", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return order;
 }

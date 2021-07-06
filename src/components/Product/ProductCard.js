@@ -34,6 +34,7 @@ const ProductCard = ({ index, product, cart, setCart }) => {
       <img
         className="addToCart"
         src={AddtoCart}
+        alt="Add to cart"
         onClick={() => {
           handleAddtoCart();
         }}

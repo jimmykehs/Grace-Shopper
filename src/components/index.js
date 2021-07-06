@@ -8,3 +8,6 @@ export { default as Keyboards } from "./Keyboards";
 export { default as Mouse } from "./Mouse";
 export { default as Headsets } from "./Headsets";
 export { default as CreateProduct } from "./CreateProduct";
+export { default as OrderSuccess } from "./Orders/OrderSuccess";
+export { default as MyAccount } from "./MyAccount/MyAccount";
+export { default as OrderHistory } from "./Orders/OrderHistory";

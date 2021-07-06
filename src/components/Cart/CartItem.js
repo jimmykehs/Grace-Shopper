@@ -41,7 +41,7 @@ const CartItem = ({ index, token, item, cart, setCart }) => {
 
   return (
     <div className="CartCard">
-      <img className="productImg" src={image_url} />
+      <img className="productImg" src={image_url} alt="Computer Part" />
       <div className="CartCardInfo">
         <h1 className="name">{name}</h1>
         <p className="description">{description}</p>
@@ -65,6 +65,7 @@ const CartItem = ({ index, token, item, cart, setCart }) => {
       <img
         className="deleteIcon"
         src={TrashCan}
+        alt="Remove from cart"
         onClick={() => {
           handleProductRemove();
         }}

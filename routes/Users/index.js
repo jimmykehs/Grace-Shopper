@@ -3,7 +3,7 @@ const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
-const { requireAdmin, authUser } = require("../Utils/utils.js");
+const { requireAdmin, authUser, requireUser } = require("../Utils/utils.js");
 
 const {
   getAllUsers,
@@ -11,11 +11,12 @@ const {
   getUserByUsername,
   verifyUniqueUser,
   deleteUser,
+  getUserById,
 } = require("../../db");
 const { patchUser } = require("../../db/users/index.js");
 
 //Getting all users
-usersRouter.get("/", async (_, res, next) => {
+usersRouter.get("/", async (req, res, next) => {
   try {
     const users = await getAllUsers();
 
@@ -25,6 +26,16 @@ usersRouter.get("/", async (_, res, next) => {
     });
   } catch ({ name, message }) {
     next({ name: "GetAllUsersError", message: "Unable to get all users!" });
+  }
+});
+
+//Get info for logged in user
+usersRouter.get("/me", requireUser, async (req, res, next) => {
+  try {
+    const userData = await getUserById(req.user.id);
+    res.send(userData);
+  } catch (error) {
+    next("ERROR", error);
   }
 });
 
@@ -145,6 +156,7 @@ usersRouter.patch("/me/:id", authUser, async (req, res, next) => {
   }
 });
 
+//Delete user from DB
 usersRouter.delete("/:id", requireAdmin, async (req, res, next) => {
   const { id } = req.params;
   const deletedUser = await deleteUser(id);

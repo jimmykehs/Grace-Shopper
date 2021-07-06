@@ -442,11 +442,11 @@ async function createCart(user_id) {
       `
       INSERT INTO user_cart(user_id)
       VALUES ($1)
-      ON CONFLICT (user_id) DO NOTHING
       RETURNING *
     `,
       [user_id]
     );
+    console.log("NEW CART CREATED");
     return userCart;
   } catch (error) {
     console.error("could not create cart");
@@ -497,7 +497,7 @@ async function setCartInactive(cart_id) {
     return await client.query(
       `
       UPDATE user_cart SET active=false
-      WHERE user_cart.user_id=$1
+      WHERE user_cart.id=$1
       `,
       [cart_id]
     );
@@ -564,7 +564,6 @@ async function getUserById(user_id) {
     if (address) {
       user.address = address;
     }
-
     return user;
   } catch (error) {
     throw error;
@@ -622,22 +621,21 @@ async function createUserOrder(user_id) {
     const userCart = await getCartByUserId(user_id);
     if (userCart.length === 0) {
       console.error("Can't create user order without a user cart");
-      throw error;
-    }
-    // console.log(userCart, "USER CART");
-    const { rows: createdOrder } = await client.query(
-      `
+    } else {
+      const { rows: createdOrder } = await client.query(
+        `
         INSERT INTO user_orders(user_id, user_cart_id)
         VALUES ($1, $2)
         ON CONFLICT (user_id, user_cart_id) DO NOTHING
         RETURNING *
       `,
-      [user_id, userCart[0].id]
-    );
-    console.log(createdOrder, "CREATED ORDER");
-    await setCartInactive(userCart[0].id);
-    await addCartProductsToOrderProducts(userCart[0].id, createdOrder[0].id);
-    return await getUserByIdForOrders(user_id);
+        [user_id, userCart[0].id]
+      );
+      console.log(createdOrder, "CREATED ORDER");
+      await setCartInactive(userCart[0].id);
+      await addCartProductsToOrderProducts(userCart[0].id, createdOrder[0].id);
+      return await getUserByIdForOrders(user_id);
+    }
   } catch (error) {
     console.error("could not create user order");
     throw error;

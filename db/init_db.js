@@ -81,8 +81,7 @@ async function buildTables() {
   CREATE TABLE user_cart(
       id SERIAL PRIMARY KEY,
       user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-      active BOOLEAN DEFAULT TRUE,
-      UNIQUE(user_id)
+      active BOOLEAN DEFAULT TRUE
   ); 
   
   CREATE TABLE user_orders(

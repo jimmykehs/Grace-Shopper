@@ -11,6 +11,7 @@ const { getUserById } = require("../db");
 apiRouter.use(async (req, res, next) => {
   const prefix = "Bearer ";
   const auth = req.header("Authorization");
+  console.log(auth);
 
   if (!auth) {
     next();

@@ -1,4 +1,3 @@
-import { get } from "http";
 import React, { useState, useEffect } from "react";
 import { getProducts } from "../../api";
 import "./Product.css";
@@ -24,7 +23,14 @@ const Products = ({ cart, setCart }) => {
       <h1 className="Title">Enjoy all the Broken:</h1>
       <div className="productCards">
         {grabbedProducts?.map((product, index) => {
-          return <ProductCard index={index} product={product} cart={cart} />;
+          return (
+            <ProductCard
+              key={product.id}
+              index={index}
+              product={product}
+              cart={cart}
+            />
+          );
         })}
       </div>
     </div>

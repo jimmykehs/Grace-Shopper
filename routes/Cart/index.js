@@ -10,6 +10,7 @@ const {
   deleteCartItem,
   updateProductQuantity,
   getUserById,
+  createUserOrder,
 } = require("../../db");
 
 cartRouter.get("/", requireUser, async (req, res, next) => {
@@ -42,6 +43,9 @@ cartRouter.patch("/:productId", requireUser, async (req, res, next) => {
 });
 
 cartRouter.post("/checkout", async (req, res) => {
+  if (req.user) {
+    await createUserOrder(req.user.id);
+  }
   const cartItems = req.body;
   const line_items = [];
   cartItems.forEach((item) => {
@@ -62,7 +66,7 @@ cartRouter.post("/checkout", async (req, res) => {
     payment_method_types: ["card"],
     line_items,
     mode: "payment",
-    success_url: "http://localhost:3000/",
+    success_url: "http://localhost:3000/ordersuccess",
     cancel_url: "http://localhost:3000/cart",
   });
   res.send(session.url);
