@@ -12,8 +12,12 @@ import {
   Mouse,
   Headsets,
   CreateProduct,
+
+  MyAccount,
+
   OrderSuccess,
   OrderHistory,
+
 } from "./components";
 import { clearToken, clearAdmin } from "./api";
 import { Egg } from "./Img";
@@ -23,6 +27,7 @@ const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [admin, setAdmin] = useState(false);
   const [cart, setCart] = useState([]);
+  const [user, setUser] = useState("");
 
   useEffect(() => {
     if (localStorage.getItem("Cart")) {
@@ -41,9 +46,20 @@ const App = () => {
       setAdmin(true);
     }
   });
+
+  useEffect(() => {
+    if (localStorage.getItem("user")) {
+      setUser(localStorage.getItem("user"));
+    }
+  });
+
   useEffect(() => {
     localStorage.setItem("Cart", JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    localStorage.setItem("user", user);
+  });
 
   return (
     <div className="App">
@@ -58,6 +74,11 @@ const App = () => {
           <Link className="userButtons" to="/cart">
             View Cart
           </Link>
+          {loggedIn ? (
+            <Link className="userButtons" to="/my-account">
+              My Account
+            </Link>
+          ) : null}
           {!loggedIn ? (
             <Link className="userButtons" to="/register">
               Sign Up
@@ -144,16 +165,23 @@ const App = () => {
                 loggedIn={loggedIn}
                 setLoggedIn={setLoggedIn}
                 setAdmin={setAdmin}
+                user={user}
+                setUser={setUser}
               />
             </Route>
             <Route path="/register">
               <Register loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+            </Route>
+
+            <Route path="/my-account">
+              <MyAccount user={user} setUser={setUser} />
             </Route>
             <Route exact path="/orderSuccess">
               <OrderSuccess cart={cart} setCart={setCart} />
             </Route>
             <Route exact path="/my-orders">
               <OrderHistory />
+
             </Route>
           </Switch>
         </main>

@@ -165,6 +165,44 @@ export async function addItemToCart(product_id, quantity, token) {
   }
 }
 
+
+export async function editUser(id, name, email) {
+  try {
+    let updatedInfo = {};
+    let newName = prompt("What would you like to change your name to?", name);
+    let newEmail = prompt(
+      "What would you like to change your Email to?",
+      email
+    );
+
+    if (newName) {
+      updatedInfo.name = newName;
+    }
+    if (newEmail) {
+      updatedInfo.email = newEmail;
+    }
+
+    const { data } = await axios.patch(`/api/users/me/${id}`, updatedInfo);
+    console.log(data);
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getMyAccount(username) {
+  try {
+    let myUsername = { username };
+    console.log(myUsername);
+    const { data } = await axios.post("/api/users/me", myUsername);
+    console.log(data);
+    console.log(data.user);
+    return data.user;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function checkoutUser(cart) {
   try {
     const { data } = await axios.post("api/cart/checkout", cart);
@@ -202,3 +240,4 @@ export async function getAllUserOrders(token) {
   });
   return order;
 }
+
