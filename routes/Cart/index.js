@@ -2,7 +2,6 @@ const express = require("express");
 const cartRouter = express.Router();
 const Stripe = require("stripe");
 const stripe = Stripe(`${process.env.STRIPE_API_KEY}`);
-const cors = require("cors");
 const { requireUser } = require("../Utils/utils.js");
 const {
   addProductToCart,
@@ -67,8 +66,8 @@ cartRouter.post("/checkout", async (req, res) => {
     payment_method_types: ["card"],
     line_items,
     mode: "payment",
-    success_url: "http://localhost:3000/ordersuccess",
-    cancel_url: "http://localhost:3000/cart",
+    success_url: `${process.env.STRIPE_REDIRECT}/orderSuccess`,
+    cancel_url: `${process.env.STRIPE_REDIRECT}/cart`,
   });
   res.send(session.url);
 });
