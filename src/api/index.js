@@ -185,17 +185,6 @@ export async function removeUser(id, token) {
   }
 }
 
-export async function getUser(token) {
-  try {
-    const userData = await axios.get("/api/users/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return userData;
-  } catch (error) {
-    console.error("Error getting user");
-  }
-}
-
 export async function createUserOrder(token) {
   const order = await axios.post(
     "/api/order",
