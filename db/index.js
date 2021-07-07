@@ -9,42 +9,17 @@ const pgp = require("pg-promise")({
 });
 const db = pgp(DB_URL);
 
-//////////////////////////// FOR USE WHEN EXTERNAL FILES ARE GUCCI ///////////////////
+//////////////////// PRODUCT QUERIES ////////////////////
 
-// const {
-//   createProduct,
-//   getAllProducts,
-//   getProductById,
-//   getProductByType,
-//   patchProduct,
-//   getProductByName,
-// } = require("./products");
-
-// const {
-//   createUser,
-//   getAllUsers,
-//   getUserByUsername,
-//   verifyUniqueUser,
-//   patchUser,
-// } = require("./users");
-
-// const { addProductToCart } = require("./carts");
-
-// const { addCartToUserOrders } = require("./orders");
-// database methods
-////////////////////////////////////////////////////////////////////////////////////
-
-// PRODUCTS
-
-const createProduct = async ({
+async function createProduct({
   name,
   description,
   price,
   image_url,
   type,
-  in_stock = true,
-  inventory = 100,
-}) => {
+  in_stock,
+  inventory,
+}) {
   try {
     const {
       rows: [products],
@@ -70,7 +45,7 @@ const createProduct = async ({
     console.error("Could not create products in db/index.js @ createProduct()");
     throw err;
   }
-};
+}
 
 async function getAllProducts() {
   try {
@@ -181,15 +156,9 @@ async function getProductByType(type) {
   }
 }
 
-// USERS FUNCTIONS
+//////////////////// USER QUERIES ////////////////////
 
-const createUser = async ({
-  username,
-  password,
-  email,
-  name,
-  admin = false,
-}) => {
+async function createUser({ username, password, email, name, admin = false }) {
   try {
     const {
       rows: [users],
@@ -210,7 +179,7 @@ const createUser = async ({
     console.error("Could not create users in db/index.js");
     throw err;
   }
-};
+}
 
 async function getAllUsers() {
   try {
@@ -350,22 +319,22 @@ async function joinAddressToUser(user_id) {
   }
 }
 
-// GUESTS
+//////////////////// GUESTS QUERIES ////////////////////
 
-const createGuest = async ({ email, name, cart = [] }) => {
+async function createGuest({ email, name }) {
   try {
     const {
       rows: [guests],
     } = await client.query(
       `
             INSERT INTO guests(
-              email, name, cart
+              email, name
               )
-            VALUES($1, $2, $3)
+            VALUES($1, $2)
             ON CONFLICT (email) DO NOTHING
             RETURNING *;
          `,
-      [email, name, cart]
+      [email, name]
     );
 
     return guests;
@@ -373,11 +342,10 @@ const createGuest = async ({ email, name, cart = [] }) => {
     console.error("Could not create guests in db/index.js");
     throw err;
   }
-};
+}
 
-// USER CART
+//////////////////// USER CART QUERIES ////////////////////
 
-//createPostTag
 async function createCartItem(user_id, product_id, quantity) {
   try {
     let userCart = await getCartByUserId(user_id);
@@ -395,7 +363,7 @@ async function createCartItem(user_id, product_id, quantity) {
       `,
         [userCart.id, product_id, quantity]
       );
-      console.log(product);
+
       return product;
     }
     const {
@@ -410,7 +378,7 @@ async function createCartItem(user_id, product_id, quantity) {
     `,
       [userCart[0].id, product_id, quantity]
     );
-    console.log(product);
+
     return product;
   } catch (error) {
     console.error("could not create cart item");
@@ -573,7 +541,7 @@ async function getUserById(user_id) {
 async function deleteCartItem(user_id, product_id) {
   try {
     const userCart = await getCartByUserId(user_id);
-    console.log("USER CART", userCart);
+
     const {
       rows: [deletedItem],
     } = await client.query(
@@ -596,7 +564,9 @@ async function updateProductQuantity(user_id, product_id, quantity) {
     const userCart = await getCartByUserId(user_id);
     console.log("USER CART", userCart);
     console.log(quantity, userCart[0].id, product_id);
-    const { rows } = await client.query(
+    const {
+      rows: [updatedProduct],
+    } = await client.query(
       `
       UPDATE cart_products
       SET quantity = ($1)
@@ -606,15 +576,14 @@ async function updateProductQuantity(user_id, product_id, quantity) {
     `,
       [quantity, userCart[0].id, product_id]
     );
-    console.log("UPDATED", rows);
-    // return updatedProduct;
+
+    return updatedProduct;
   } catch (error) {
-    console.log(error);
     console.error("Couldn't update quantities");
     throw error;
   }
 }
-// ORDERS
+//////////////////// ORDERS QUERIES ////////////////////
 
 async function createUserOrder(user_id) {
   try {
@@ -631,7 +600,6 @@ async function createUserOrder(user_id) {
       `,
         [user_id, userCart[0].id]
       );
-      console.log(createdOrder, "CREATED ORDER");
       await setCartInactive(userCart[0].id);
       await addCartProductsToOrderProducts(userCart[0].id, createdOrder[0].id);
       return await getUserByIdForOrders(user_id);
@@ -643,15 +611,11 @@ async function createUserOrder(user_id) {
 }
 
 async function addCartProductsToOrderProducts(cart_id, order_id) {
-  // select all of the productIds that relate to the cart.
-  // this is an array of productIds
   try {
     const { rows: cartProducts } = await client.query(
       `SELECT * FROM cart_products WHERE user_cart_id = $1`,
       [cart_id]
     );
-    // console.log(cart_id, "CART ID");
-    // console.log(cartProducts, "CART PRODUCTS");
     await bulkUpdateOrderProducts(order_id, cartProducts);
     await removeCartItemsOnOrder(cart_id);
   } catch (err) {
@@ -674,7 +638,6 @@ async function bulkUpdateOrderProducts(order_id, cartProducts) {
   const newCartProducts = cartProducts.map((cp) => {
     return { order_id, ...cp };
   });
-  // console.log(newCartProducts, "NEW CART PRODUCTS");
   const cs = new pgp.helpers.ColumnSet(["order_id", "product_id", "quantity"], {
     table: "order_products",
   });
@@ -701,7 +664,6 @@ async function getUserByIdForOrders(user_id) {
         message: "Could not find a User with that user_id",
       };
     }
-    console.log(user_id, "USER ID");
     const { rows: products } = await client.query(
       `
       SELECT *
@@ -714,7 +676,6 @@ async function getUserByIdForOrders(user_id) {
     );
 
     user.order = products;
-    console.log(products, "PRODUCTS");
     return user;
   } catch (error) {
     throw error;
@@ -739,7 +700,6 @@ module.exports = {
   createUserAddress,
   createGuest,
   addProductToCart,
-  // addCartToUserOrders,
   createUserOrder,
   createCartItem,
   addCartProductsToOrderProducts,
