@@ -29,16 +29,6 @@ usersRouter.get("/", async (req, res, next) => {
   }
 });
 
-//Get info for logged in user
-usersRouter.get("/me", requireUser, async (req, res, next) => {
-  try {
-    const userData = await getUserById(req.user.id);
-    res.send(userData);
-  } catch (error) {
-    next("ERROR", error);
-  }
-});
-
 //Getting user for login
 usersRouter.post("/login", async (req, res, next) => {
   const { username, password } = req.body;

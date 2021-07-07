@@ -26,6 +26,7 @@ const Cart = ({ cart, setCart }) => {
   return (
     <div className="CartCards">
       {cart.map((item, index) => {
+        console.log(item);
         total += item.price * item.quantity;
         return (
           <CartItem

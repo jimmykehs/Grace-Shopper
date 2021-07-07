@@ -594,9 +594,9 @@ async function deleteCartItem(user_id, product_id) {
 async function updateProductQuantity(user_id, product_id, quantity) {
   try {
     const userCart = await getCartByUserId(user_id);
-    const {
-      rows: [updatedProduct],
-    } = await client.query(
+    console.log("USER CART", userCart);
+    console.log(quantity, userCart[0].id, product_id);
+    const { rows } = await client.query(
       `
       UPDATE cart_products
       SET quantity = ($1)
@@ -606,8 +606,8 @@ async function updateProductQuantity(user_id, product_id, quantity) {
     `,
       [quantity, userCart[0].id, product_id]
     );
-    console.log("UPDATED", updatedProduct);
-    return updatedProduct;
+    console.log("UPDATED", rows);
+    // return updatedProduct;
   } catch (error) {
     console.log(error);
     console.error("Couldn't update quantities");

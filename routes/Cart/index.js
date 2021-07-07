@@ -39,6 +39,7 @@ cartRouter.patch("/:productId", requireUser, async (req, res, next) => {
   const { quantity } = req.body;
   console.log(id, productId, quantity);
   const updatedItem = await updateProductQuantity(id, productId, quantity);
+  console.log("UPDATED ITEM", updatedItem);
   res.send(updatedItem);
 });
 

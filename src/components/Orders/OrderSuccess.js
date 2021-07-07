@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
-import { createUserOrder } from "../../api";
+import { createUserOrder, createGuestOrder } from "../../api";
 
-const OrderSuccess = ({ setCart }) => {
+const OrderSuccess = ({ setCart, cart }) => {
   useEffect(() => {
     async function createOrder() {
       const token = localStorage.getItem("token");
       if (token) {
         await createUserOrder(token);
-        setCart([]);
       }
+      setCart([]);
     }
 
     createOrder();
