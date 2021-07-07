@@ -146,7 +146,6 @@ usersRouter.patch("/me/:id", async (req, res, next) => {
   }
 });
 
-
 usersRouter.post("/me", async (req, res, next) => {
   const { username } = req.body;
   console.log(username);
@@ -161,13 +160,13 @@ usersRouter.post("/me", async (req, res, next) => {
   } catch ({ name, message }) {
     next({ name: "GetUserError", message: "Unable to find your account" });
   }
+});
 
 //Delete user from DB
 usersRouter.delete("/:id", requireAdmin, async (req, res, next) => {
   const { id } = req.params;
   const deletedUser = await deleteUser(id);
   res.send(deletedUser);
-
 });
 
 module.exports = usersRouter;

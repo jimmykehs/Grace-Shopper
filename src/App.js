@@ -12,12 +12,9 @@ import {
   Mouse,
   Headsets,
   CreateProduct,
-
   MyAccount,
-
   OrderSuccess,
   OrderHistory,
-
 } from "./components";
 import { clearToken, clearAdmin } from "./api";
 import { Egg } from "./Img";
@@ -181,7 +178,6 @@ const App = () => {
             </Route>
             <Route exact path="/my-orders">
               <OrderHistory />
-
             </Route>
           </Switch>
         </main>
