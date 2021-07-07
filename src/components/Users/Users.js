@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { changeAdmin, getUsers } from "../../api";
+import { getUsers } from "../../api";
 import UserCard from "./UserCard";
 import "./Users.css";
 const Users = () => {
@@ -23,7 +23,7 @@ const Users = () => {
       <h1 className="Title">Here are all the Users:</h1>
       <div className="userCards">
         {grabbedUsers?.map((user, index) => {
-          return <UserCard user={user} index={index} />;
+          return <UserCard key={user.id} user={user} index={index} />;
         })}
       </div>
     </div>

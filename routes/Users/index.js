@@ -3,18 +3,20 @@ const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
-const { requireAdmin, authUser } = require("../Utils/utils.js");
+const { requireAdmin, authUser, requireUser } = require("../Utils/utils.js");
 
 const {
   getAllUsers,
   createUser,
   getUserByUsername,
   verifyUniqueUser,
+  deleteUser,
+  getUserById,
 } = require("../../db");
 const { patchUser } = require("../../db");
 
 //Getting all users
-usersRouter.get("/", async (_, res, next) => {
+usersRouter.get("/", async (req, res, next) => {
   try {
     const users = await getAllUsers();
 
@@ -142,6 +144,13 @@ usersRouter.patch("/me/:id", authUser, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+//Delete user from DB
+usersRouter.delete("/:id", requireAdmin, async (req, res, next) => {
+  const { id } = req.params;
+  const deletedUser = await deleteUser(id);
+  res.send(deletedUser);
 });
 
 module.exports = usersRouter;

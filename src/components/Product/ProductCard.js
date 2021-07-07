@@ -11,7 +11,6 @@ const ProductCard = ({ index, product, cart, setCart }) => {
     const existingProductInCart = cart.find(
       (element) => element.name === product.name
     );
-    console.log(existingProductInCart);
     if (existingProductInCart) {
       existingProductInCart.quantity += 1;
       cart.splice(index, 1, existingProductInCart);
@@ -35,6 +34,7 @@ const ProductCard = ({ index, product, cart, setCart }) => {
       <img
         className="addToCart"
         src={AddtoCart}
+        alt="Add to cart"
         onClick={() => {
           handleAddtoCart();
         }}

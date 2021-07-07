@@ -12,6 +12,8 @@ import {
   Mouse,
   Headsets,
   CreateProduct,
+  OrderSuccess,
+  OrderHistory,
 } from "./components";
 import { clearToken, clearAdmin } from "./api";
 import { Egg } from "./Img";
@@ -48,6 +50,11 @@ const App = () => {
       <Router>
         <Menu right>
           <h1>Options:</h1>
+          {loggedIn ? (
+            <Link className="userButtons" to="/my-orders">
+              My Orders
+            </Link>
+          ) : null}
           <Link className="userButtons" to="/cart">
             View Cart
           </Link>
@@ -141,6 +148,12 @@ const App = () => {
             </Route>
             <Route path="/register">
               <Register loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+            </Route>
+            <Route exact path="/orderSuccess">
+              <OrderSuccess cart={cart} setCart={setCart} />
+            </Route>
+            <Route exact path="/my-orders">
+              <OrderHistory />
             </Route>
           </Switch>
         </main>

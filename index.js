@@ -14,6 +14,9 @@ server.use(bodyParser.json());
 const path = require("path");
 server.use(express.static(path.join(__dirname, "build")));
 
+const cors = require("cors");
+server.use(cors());
+
 // here's our API
 server.use("/api", require("./routes"));
 

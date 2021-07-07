@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { TrashCan } from "../../Img";
 import { updateProductQuantity, removeItemFromCart } from "../../api";
 const CartItem = ({ index, token, item, cart, setCart }) => {
-  const { id, name, description, image_url, quantity, price } = item;
+  const { id, name, description, image_url, quantity, price, product_id } =
+    item;
   const [ItemQuantity, setItemQuantity] = useState(quantity);
 
   const handleQuantityChange = async (event) => {
@@ -11,12 +12,13 @@ const CartItem = ({ index, token, item, cart, setCart }) => {
       setItemQuantity(ItemQuantity);
     } else {
       setItemQuantity(value);
+      console.log(id);
     }
   };
   const handleProductRemove = async () => {
     try {
       if (token) {
-        await removeItemFromCart(id, token);
+        await removeItemFromCart(product_id, token);
       }
       const updatedCart = [...cart];
       updatedCart.splice(index, 1);
@@ -29,7 +31,7 @@ const CartItem = ({ index, token, item, cart, setCart }) => {
   const DBUpdateQuantity = async (event) => {
     try {
       if (token) {
-        await updateProductQuantity(id, ItemQuantity, token);
+        await updateProductQuantity(product_id, ItemQuantity, token);
       }
       const updatedProducts = [...cart];
       updatedProducts[index].quantity = ItemQuantity;
@@ -41,7 +43,7 @@ const CartItem = ({ index, token, item, cart, setCart }) => {
 
   return (
     <div className="CartCard">
-      <img className="productImg" src={image_url} />
+      <img className="productImg" src={image_url} alt="Computer Part" />
       <div className="CartCardInfo">
         <h1 className="name">{name}</h1>
         <p className="description">{description}</p>
@@ -65,6 +67,7 @@ const CartItem = ({ index, token, item, cart, setCart }) => {
       <img
         className="deleteIcon"
         src={TrashCan}
+        alt="Remove from cart"
         onClick={() => {
           handleProductRemove();
         }}

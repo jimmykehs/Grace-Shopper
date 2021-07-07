@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { getProducts } from "../api";
-import { AddtoCart } from "../Img";
 import ProductCard from "./Product/ProductCard";
 
 const Headsets = ({ cart }) => {
