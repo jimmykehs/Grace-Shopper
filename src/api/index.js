@@ -165,7 +165,6 @@ export async function addItemToCart(product_id, quantity, token) {
   }
 }
 
-
 export async function editUser(id, name, email) {
   try {
     let updatedInfo = {};
@@ -240,4 +239,3 @@ export async function getAllUserOrders(token) {
   });
   return order;
 }
-

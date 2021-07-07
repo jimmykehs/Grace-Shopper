@@ -54,10 +54,6 @@ const App = () => {
     localStorage.setItem("Cart", JSON.stringify(cart));
   }, [cart]);
 
-  useEffect(() => {
-    localStorage.setItem("user", user);
-  });
-
   return (
     <div className="App">
       <Router>
@@ -104,6 +100,7 @@ const App = () => {
                 clearAdmin();
                 setLoggedIn(false);
                 setAdmin(false);
+                localStorage.removeItem("user");
                 alert("You have logged out");
               }}
               to="/"

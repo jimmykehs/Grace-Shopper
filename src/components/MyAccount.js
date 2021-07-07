@@ -23,6 +23,10 @@ const MyAccount = ({ user, setUser }) => {
     getMyInfo();
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem("user", user);
+  });
+
   const handleEditUser = async (id, name, email) => {
     try {
       const routines = await editUser(id, name, email);
