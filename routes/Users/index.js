@@ -125,7 +125,7 @@ usersRouter.patch("/:id", async (req, res, next) => {
 });
 
 //Used by users to update their information
-usersRouter.patch("/me/:id", authUser, async (req, res, next) => {
+usersRouter.patch("/me/:id", async (req, res, next) => {
   const { id } = req.params;
   const { name, email } = req.body;
   const fields = {};
@@ -141,6 +141,22 @@ usersRouter.patch("/me/:id", authUser, async (req, res, next) => {
     res.send(updatedUser);
   } catch (error) {
     next(error);
+  }
+});
+
+usersRouter.post("/me", async (req, res, next) => {
+  const { username } = req.body;
+  console.log(username);
+  try {
+    const user = await getUserByUsername(username);
+    console.log(user);
+
+    res.send({
+      message: "My account grabbed",
+      user,
+    });
+  } catch ({ name, message }) {
+    next({ name: "GetUserError", message: "Unable to find your account" });
   }
 });
 

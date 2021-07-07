@@ -4,7 +4,7 @@ import { userLogin, loggedAdmin } from "../../api";
 import "./Login.css";
 
 const Login = (props) => {
-  const { setLoggedIn, setAdmin } = props;
+  const { setLoggedIn, setAdmin, setUser } = props;
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -40,6 +40,7 @@ const Login = (props) => {
               alert(submit.message);
             } else {
               setLoggedIn(true);
+              setUser(username);
               return <Redirect to="/" />;
             }
           } catch (error) {
