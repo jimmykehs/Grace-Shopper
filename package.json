@@ -17,6 +17,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "hamburger-react": "^2.4.1",
@@ -28,7 +29,8 @@
     "react-burger-menu": "^2.9.2",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^3.4.1"
+    "react-scripts": "^3.4.1",
+    "stripe": "^8.160.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

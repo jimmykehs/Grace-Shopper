@@ -4,23 +4,17 @@ const {
   client,
   createProduct,
   getAllProducts,
-  getProductById,
   getProductByType,
-  patchProduct,
   createUser,
   getAllUsers,
-  patchUser,
   createUserAddress,
   createGuest,
   addProductToCart,
-  // addCartToUserOrders,
   createUserOrder,
-  addCartProductsToOrderProducts,
 } = require("./index");
 
 async function buildTables() {
   try {
-    // drop tables in correct order
     client.query(`
         DROP TABLE IF EXISTS order_products;
         DROP TABLE IF EXISTS cart_products;
@@ -31,10 +25,7 @@ async function buildTables() {
         DROP TABLE IF EXISTS users;
         DROP TABLE IF EXISTS products;
       `);
-    // build tables in correct order
     console.log("Starting to build tables...");
-    // create all tables, in the correct order
-    // products, users, user_carts **
     await client.query(`
     CREATE TABLE products(
       id SERIAL PRIMARY KEY,
@@ -62,7 +53,7 @@ async function buildTables() {
 
   CREATE TABLE user_address(
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     street VARCHAR(255) NOT NULL,
     street_2 VARCHAR(255),
     state VARCHAR(2) NOT NULL,
@@ -80,34 +71,32 @@ async function buildTables() {
   
   CREATE TABLE user_cart(
       id SERIAL PRIMARY KEY,
-      user_id INTEGER REFERENCES users(id),
-      active BOOLEAN DEFAULT TRUE,
-      UNIQUE(user_id)
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      active BOOLEAN DEFAULT TRUE
   ); 
   
   CREATE TABLE user_orders(
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
-    user_cart_id INTEGER REFERENCES user_cart(id),
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    user_cart_id INTEGER REFERENCES user_cart(id) ON DELETE CASCADE,
     UNIQUE(user_id, user_cart_id)
 );
 
   CREATE TABLE cart_products(
       id SERIAL PRIMARY KEY,
-      "user_cart_id" INTEGER REFERENCES user_cart(id),
-      "product_id" INTEGER REFERENCES products(id),
+      "user_cart_id" INTEGER REFERENCES user_cart(id) ON DELETE CASCADE,
+      "product_id" INTEGER REFERENCES products(id) ON DELETE CASCADE,
       quantity INTEGER NOT NULL,
       active BOOLEAN DEFAULT TRUE,
       UNIQUE("user_cart_id", "product_id")
   ); 
   CREATE TABLE order_products(
     id SERIAL PRIMARY KEY,
-    order_id INTEGER REFERENCES user_orders(id),
-    product_id INTEGER REFERENCES products(id),
+    order_id INTEGER REFERENCES user_orders(id) ON DELETE CASCADE,
+    product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
     quantity INTEGER NOT NULL
     
   )
-
       `);
     console.log("Finished building tables...");
   } catch (error) {
@@ -225,21 +214,18 @@ const createInitialUsers = async () => {
         password: bcrypt.hashSync("AjaxDestroyer44", 10),
         email: "brian_p@gmail.com",
         name: "Brian Pollygren",
-        // cart: ["product 1"],
       },
       {
         username: "Shyguy666",
         password: bcrypt.hashSync("appleBoy24", 10),
         email: "shyguy666@yahoo.com",
         name: "Erin Naples",
-        // cart: ["product 3"],
       },
       {
         username: "Jessica.Troy",
         password: bcrypt.hashSync("AriGorn7747", 10),
         email: "jessica.troy@gmail.com",
         name: "Jessica Troy",
-        // cart: [],
       },
     ];
     const users = await Promise.all(usersToCreate.map(createUser));
@@ -285,7 +271,7 @@ async function rebuildDB() {
     await buildTables();
     await createInitialProducts();
     await createInitialUsers();
-    // await createInitialGuests();
+    await createInitialGuests();
   } catch (error) {
     throw error;
   }
