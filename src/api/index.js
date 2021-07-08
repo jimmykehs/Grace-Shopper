@@ -239,3 +239,26 @@ export async function getAllUserOrders(token) {
   });
   return order;
 }
+
+export async function updateOrderStatus(order_id, status) {
+  const updatedOrder = await axios.patch(`/api/order/${order_id}`, { status });
+  return updatedOrder;
+}
+
+export async function getAllOrders() {
+  const { data } = await axios.get("api/order/all");
+  const orders = [];
+  data.forEach((el, index) => {
+    if (orders.some((order) => order.id === el.id)) {
+      const orderIndx = orders.findIndex((e) => e.id === el.id);
+      orders[orderIndx].products.push(el);
+    } else {
+      orders.push({
+        id: el.id,
+        status: el.status,
+        products: [{ name: el.name, quantity: el.quantity }],
+      });
+    }
+  });
+  return orders;
+}

@@ -15,6 +15,7 @@ import {
   MyAccount,
   OrderSuccess,
   OrderHistory,
+  AllOrders,
 } from "./components";
 import { clearToken, clearAdmin } from "./api";
 import { Egg } from "./Img";
@@ -175,6 +176,9 @@ const App = () => {
             </Route>
             <Route exact path="/my-orders">
               <OrderHistory />
+            </Route>
+            <Route exact path="/all-orders">
+              <AllOrders />
             </Route>
           </Switch>
         </main>

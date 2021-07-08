@@ -604,7 +604,7 @@ async function createUserOrder(user_id) {
       );
       await setCartInactive(userCart[0].id);
       await addCartProductsToOrderProducts(userCart[0].id, createdOrder[0].id);
-      return await getUserByIdForOrders(user_id);
+      return createdOrder[0].id;
     }
   } catch (error) {
     console.error("could not create user order");
@@ -688,6 +688,7 @@ async function updateOrderStatus(order_id, fields = {}) {
   const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
     .join(", ");
+  console.log("QUERY", order_id, setString, Object.values(fields));
   try {
     if (setString.length > 0) {
       const { rows: update } = await client.query(
@@ -707,6 +708,22 @@ async function updateOrderStatus(order_id, fields = {}) {
     }
   } catch (error) {
     console.error("Could not patch product in db/index.js @ patchProduct");
+    throw error;
+  }
+}
+
+async function getAllOrders() {
+  try {
+    const { rows } = await client.query(`
+  SELECT user_orders.id, user_orders.status, order_products.quantity, products.name, products.date_created 
+  FROM user_orders
+  INNER JOIN order_products 
+  ON user_orders.id = order_products.order_id
+  INNER JOIN products on order_products.id = products.id;
+  `);
+    console.log(rows);
+    return rows;
+  } catch (error) {
     throw error;
   }
 }
@@ -736,5 +753,6 @@ module.exports = {
   updateProductQuantity,
   deleteUser,
   updateOrderStatus,
+  getAllOrders,
   // db methods
 };

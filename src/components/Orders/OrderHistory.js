@@ -19,14 +19,16 @@ const OrderHistory = () => {
       <h1>Order History</h1>
       <div id="All-Orders">
         {orders.map((item, index) => {
-          const { id, name, quantity } = item;
+          const { id, name, quantity, status } = item;
           let newDiv = document.getElementById(item.id);
           if (newDiv === null) {
             newDiv = document.createElement("div");
             newDiv.setAttribute("id", id);
             newDiv.setAttribute("class", "order");
             const orderHeader = document.createElement("h1");
-            const orderID = document.createTextNode(`Order ID: ${id}`);
+            const orderID = document.createTextNode(
+              `Order ID: ${id} ---- Status: ${status}`
+            );
             orderHeader.appendChild(orderID);
             newDiv.appendChild(orderHeader);
             document.getElementById("All-Orders").appendChild(newDiv);

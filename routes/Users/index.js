@@ -11,7 +11,7 @@ const {
   getUserByUsername,
   verifyUniqueUser,
   deleteUser,
-  getUserById,
+  getAllOrders,
 } = require("../../db");
 const { patchUser } = require("../../db");
 
