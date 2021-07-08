@@ -492,6 +492,8 @@ async function getUserById(user_id) {
       };
     }
 
+    delete user.password;
+
     const { rows: products } = await client.query(
       `
       SELECT *
