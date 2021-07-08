@@ -16,7 +16,7 @@ const OrderHistory = () => {
 
   return (
     <>
-      <h1>Order History</h1>
+      <h1 className="Title">Order History</h1>
       <div id="All-Orders">
         {orders.map((item, index) => {
           const { id, name, quantity, status } = item;

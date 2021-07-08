@@ -15,7 +15,7 @@ const OrderSuccess = ({ setCart, cart }) => {
   }, []);
   return (
     <>
-      <h1>Your order has been placed!</h1>
+      <h1 className="Title">Your order has been placed!</h1>
     </>
   );
 };

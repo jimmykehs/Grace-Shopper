@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getAllOrders } from "../../api";
 import OrderCard from "./OrderCard.js";
+import "./AllOrders.css";
 
 const AllOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -13,10 +14,12 @@ const AllOrders = () => {
 
   return (
     <>
-      <h1>All orders</h1>
-      {orders.map((order) => {
-        return <OrderCard order={order} />;
-      })}
+      <h1 className="Title">All orders</h1>
+      <div className="Orders-Container">
+        {orders.map((order) => {
+          return <OrderCard key={order.id} order={order} />;
+        })}
+      </div>
     </>
   );
 };

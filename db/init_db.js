@@ -323,7 +323,7 @@ async function testDB() {
 
     console.log("Calling updateOrderStatus");
     const orderStatusWithUpdate = await updateOrderStatus(1, {
-      status: "created",
+      status: "Processing",
     });
     console.log("Results:", orderStatusWithUpdate);
 
