@@ -16,9 +16,14 @@
   font-size: 20px;
   border: 3px solid black;
   border-radius: 10px;
+  margin: 0px 10px;
 }
 
 .user button:hover {
   background-color: #3f3f3f;
   color: white;
+}
+
+.user .RemoveUser-Btn:hover {
+  background-color: rgb(189, 57, 57);
 }

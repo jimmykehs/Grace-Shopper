@@ -13,3 +13,4 @@ export { default as MyAccount } from "./MyAccount";
 
 export { default as OrderSuccess } from "./Orders/OrderSuccess";
 export { default as OrderHistory } from "./Orders/OrderHistory";
+export { default as AllOrders } from "./Orders/AllOrders";

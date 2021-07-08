@@ -28,7 +28,6 @@ const UserCard = ({ user, index }) => {
       <h3>Email: {user.email}</h3>
       <h3>Admin Status: {admin.toString()}</h3>
       <button
-        type="button"
         onClick={() => {
           handleChangeAdminStatus(user.id, !admin);
         }}
@@ -36,6 +35,7 @@ const UserCard = ({ user, index }) => {
         Change Admin Status
       </button>
       <button
+        className="RemoveUser-Btn"
         onClick={() => {
           deleteUser(user.id);
         }}

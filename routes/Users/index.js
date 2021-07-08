@@ -11,7 +11,7 @@ const {
   getUserByUsername,
   verifyUniqueUser,
   deleteUser,
-  getUserById,
+  getAllOrders,
 } = require("../../db");
 const { patchUser } = require("../../db");
 
@@ -105,7 +105,6 @@ usersRouter.post("/register", async (req, res, next) => {
       res.send({ message: "Thanks for signing up!", token });
     }
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -118,7 +117,6 @@ usersRouter.patch("/:id", async (req, res, next) => {
     const fields = {
       admin,
     };
-    console.log(admin);
     const updatedUser = await patchUser(id, fields);
     res.send(updatedUser);
   } catch (error) {
@@ -148,10 +146,8 @@ usersRouter.patch("/me/:id", async (req, res, next) => {
 
 usersRouter.post("/me", async (req, res, next) => {
   const { username } = req.body;
-  console.log(username);
   try {
     const user = await getUserByUsername(username);
-    console.log(user);
 
     res.send({
       message: "My account grabbed",

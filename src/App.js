@@ -15,6 +15,7 @@ import {
   MyAccount,
   OrderSuccess,
   OrderHistory,
+  AllOrders,
 } from "./components";
 import { clearToken, clearAdmin } from "./api";
 import { Egg } from "./Img";
@@ -58,20 +59,21 @@ const App = () => {
     <div className="App">
       <Router>
         <Menu right>
-          <h1>Options:</h1>
+          <h1>User Options:</h1>
           {loggedIn ? (
             <Link className="userButtons" to="/my-orders">
               My Orders
             </Link>
           ) : null}
-          <Link className="userButtons" to="/cart">
-            View Cart
-          </Link>
           {loggedIn ? (
             <Link className="userButtons" to="/my-account">
               My Account
             </Link>
           ) : null}
+          <Link className="userButtons" to="/cart">
+            View Cart
+          </Link>
+
           {!loggedIn ? (
             <Link className="userButtons" to="/register">
               Sign Up
@@ -82,6 +84,12 @@ const App = () => {
               Login
             </Link>
           ) : null}
+          {admin && <h1>Admin Options</h1>}
+          {admin && (
+            <Link className="userButtons" to="/all-orders">
+              All Orders
+            </Link>
+          )}
           {admin ? (
             <Link className="userButtons" to="/create-product">
               Create Product
@@ -92,6 +100,7 @@ const App = () => {
               View Users
             </Link>
           ) : null}
+          {loggedIn && <hr></hr>}
           {loggedIn ? (
             <Link
               className="userButtons"
@@ -175,6 +184,9 @@ const App = () => {
             </Route>
             <Route exact path="/my-orders">
               <OrderHistory />
+            </Route>
+            <Route exact path="/all-orders">
+              <AllOrders />
             </Route>
           </Switch>
         </main>

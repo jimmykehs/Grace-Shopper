@@ -20,7 +20,9 @@ const CreateProduct = () => {
 
   return (
     <div className="form-container">
-      <h1 className="form-header">CREATE NEW PRODUCT</h1>
+      <h1 className="form-header" className="Title">
+        Create Product
+      </h1>
       <div>
         <form
           className="create-product"
