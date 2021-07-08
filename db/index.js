@@ -492,6 +492,8 @@ async function getUserById(user_id) {
       };
     }
 
+    delete user.password;
+
     const { rows: products } = await client.query(
       `
       SELECT *
@@ -682,6 +684,33 @@ async function getUserByIdForOrders(user_id) {
   }
 }
 
+async function updateOrderStatus(order_id, fields = {}) {
+  const setString = Object.keys(fields)
+    .map((key, index) => `"${key}"=$${index + 1}`)
+    .join(", ");
+  try {
+    if (setString.length > 0) {
+      const { rows: update } = await client.query(
+        `
+        UPDATE user_orders
+        SET ${setString}
+        WHERE id=${order_id}
+        RETURNING *;
+      `,
+        Object.values(fields)
+      );
+      if (update) {
+        return `succesfully updated order status for order ${order_id}`;
+      } else {
+        return "Could not update order status";
+      }
+    }
+  } catch (error) {
+    console.error("Could not patch product in db/index.js @ patchProduct");
+    throw error;
+  }
+}
+
 // export
 module.exports = {
   client,
@@ -706,5 +735,6 @@ module.exports = {
   deleteCartItem,
   updateProductQuantity,
   deleteUser,
+  updateOrderStatus,
   // db methods
 };

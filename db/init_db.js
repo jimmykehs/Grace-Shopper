@@ -11,6 +11,7 @@ const {
   createGuest,
   addProductToCart,
   createUserOrder,
+  updateOrderStatus,
 } = require("./index");
 
 async function buildTables() {
@@ -79,6 +80,7 @@ async function buildTables() {
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     user_cart_id INTEGER REFERENCES user_cart(id) ON DELETE CASCADE,
+    status VARCHAR(255),
     UNIQUE(user_id, user_cart_id)
 );
 
@@ -318,6 +320,12 @@ async function testDB() {
       zip_code: "21188",
     });
     console.log("Results:", userAddress);
+
+    console.log("Calling updateOrderStatus");
+    const orderStatusWithUpdate = await updateOrderStatus(1, {
+      status: "created",
+    });
+    console.log("Results:", orderStatusWithUpdate);
 
     console.log("Finished database tests!");
   } catch (error) {
