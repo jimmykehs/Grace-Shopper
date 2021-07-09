@@ -41,7 +41,6 @@ const Login = (props) => {
               setAdmin(submit.user.admin);
               setLoggedIn(true);
               setUser(username);
-              return <Redirect to="/" />;
             }
           } catch (error) {
             console.error(error);

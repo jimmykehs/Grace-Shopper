@@ -26,6 +26,7 @@ const App = () => {
   const [admin, setAdmin] = useState(false);
   const [cart, setCart] = useState([]);
   const [user, setUser] = useState("");
+  const [isOpen, setIsOpen] = useState();
 
   useEffect(() => {
     if (localStorage.getItem("Cart")) {
@@ -49,54 +50,112 @@ const App = () => {
     if (localStorage.getItem("user")) {
       setUser(localStorage.getItem("user"));
     }
-  });
+  }, [user]);
 
   useEffect(() => {
     localStorage.setItem("Cart", JSON.stringify(cart));
   }, [cart]);
 
+  const onLinkClick = () => {
+    setIsOpen(false);
+  };
+
   return (
     <div className="App">
       <Router>
-        <Menu right>
+        <Menu
+          isOpen={isOpen}
+          onOpen={() => {
+            setIsOpen(true);
+          }}
+          right
+        >
           <h1>User Options:</h1>
           {loggedIn ? (
-            <Link className="userButtons" to="/my-orders">
+            <Link
+              className="userButtons"
+              to="/my-orders"
+              onClick={() => {
+                onLinkClick();
+              }}
+            >
               My Orders
             </Link>
           ) : null}
           {loggedIn ? (
-            <Link className="userButtons" to="/my-account">
+            <Link
+              className="userButtons"
+              to="/my-account"
+              onClick={() => {
+                onLinkClick();
+              }}
+            >
               My Account
             </Link>
           ) : null}
-          <Link className="userButtons" to="/cart">
+          <Link
+            className="userButtons"
+            to="/cart"
+            onClick={() => {
+              onLinkClick();
+            }}
+          >
             View Cart
           </Link>
 
           {!loggedIn ? (
-            <Link className="userButtons" to="/register">
+            <Link
+              className="userButtons"
+              to="/register"
+              onClick={() => {
+                onLinkClick();
+              }}
+            >
               Sign Up
             </Link>
           ) : null}
           {!loggedIn ? (
-            <Link className="userButtons" to="/login">
+            <Link
+              className="userButtons"
+              to="/login"
+              onClick={() => {
+                onLinkClick();
+              }}
+            >
               Login
             </Link>
           ) : null}
           {admin && <h1>Admin Options</h1>}
           {admin && (
-            <Link className="userButtons" to="/all-orders">
+            <Link
+              className="userButtons"
+              to="/all-orders"
+              onClick={() => {
+                onLinkClick();
+              }}
+            >
               All Orders
             </Link>
           )}
           {admin ? (
-            <Link className="userButtons" to="/create-product">
+            <Link
+              className="userButtons"
+              to="/create-product"
+              onClick={() => {
+                onLinkClick();
+              }}
+            >
               Create Product
             </Link>
           ) : null}
           {admin ? (
-            <Link className="userButtons" to="/users">
+            <Link
+              className="userButtons"
+              to="/users"
+              onClick={() => {
+                onLinkClick();
+              }}
+            >
               View Users
             </Link>
           ) : null}
@@ -111,6 +170,7 @@ const App = () => {
                 setAdmin(false);
                 localStorage.removeItem("user");
                 alert("You have logged out");
+                onLinkClick();
               }}
               to="/"
             >
