@@ -21,7 +21,7 @@ const MyAccount = ({ user, setUser }) => {
 
   useEffect(() => {
     getMyInfo();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     localStorage.setItem("user", user);
