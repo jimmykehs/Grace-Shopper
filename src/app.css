@@ -144,3 +144,37 @@ Note: Beware of modifying this element as it can break the animations - you shou
 .bm-overlay {
   background: rgba(0, 0, 0, 0.3);
 }
+
+.my-account-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.my-account {
+  display: flex;
+  flex-direction: column;
+  max-width: 800px;
+  align-items: center;
+  border: 1px solid lightgrey;
+  border-radius: 10px;
+  margin-top: 5rem;
+  padding: 5rem;
+}
+
+.account-title {
+  margin-bottom: 2rem;
+  margin-top: -5rem;
+}
+
+.edit-my-account-button {
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0;
+  background-color: lightgrey;
+  border-radius: 5px;
+}
+
+.edit-my-account-button:hover {
+  background-color: rgb(63, 63, 63);
+  color: white;
+}
