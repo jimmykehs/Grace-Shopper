@@ -54,6 +54,12 @@
   padding: 20px;
 }
 
+.StockStatus {
+  font-size: 30px;
+  font-weight: bold;
+  margin: 10px;
+}
+
 @media screen and (max-width: 768px) {
   .productImg {
     object-fit: scale-down;

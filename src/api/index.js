@@ -262,3 +262,12 @@ export async function getAllOrders() {
   });
   return orders;
 }
+
+export async function updateProduct(product_id, fields, token) {
+  const updatedProduct = await axios.patch(
+    `api/products/${product_id}`,
+    fields,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return updatedProduct;
+}

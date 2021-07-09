@@ -23,7 +23,15 @@ const Users = () => {
       <h1 className="Title">Here are all the Users:</h1>
       <div className="userCards">
         {grabbedUsers?.map((user, index) => {
-          return <UserCard key={user.id} user={user} index={index} />;
+          return (
+            <UserCard
+              key={user.id}
+              user={user}
+              index={index}
+              grabbedUsers={grabbedUsers}
+              setGrabbedUsers={setGrabbedUsers}
+            />
+          );
         })}
       </div>
     </div>

@@ -160,9 +160,13 @@ usersRouter.post("/me", async (req, res, next) => {
 
 //Delete user from DB
 usersRouter.delete("/:id", requireAdmin, async (req, res, next) => {
-  const { id } = req.params;
-  const deletedUser = await deleteUser(id);
-  res.send(deletedUser);
+  try {
+    const { id } = req.params;
+    const deletedUser = await deleteUser(id);
+    res.send(deletedUser);
+  } catch (error) {
+    next({ name: "UserError", message: "Could not delete user" });
+  }
 });
 
 module.exports = usersRouter;

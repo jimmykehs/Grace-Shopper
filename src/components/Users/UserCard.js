@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { changeAdmin, removeUser } from "../../api";
 import { Redirect } from "react-router-dom";
 
-const UserCard = ({ user, index }) => {
+const UserCard = ({ user, index, grabbedUsers, setGrabbedUsers }) => {
   const [admin, setAdmin] = useState(user.admin);
   const deleteUser = async (id) => {
     try {
       const token = localStorage.getItem("token");
       await removeUser(id, token);
+      const newUsers = [...grabbedUsers];
+      newUsers.splice(index, 1);
+      setGrabbedUsers(newUsers);
     } catch (error) {
       console.error(error);
     }

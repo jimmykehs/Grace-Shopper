@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { getCart } from "../../api";
 import CartItem from "./CartItem";
 import "./Cart.css";
 import { checkoutUser } from "../../api";
-const Cart = ({ cart, setCart }) => {
-  const [forceUpdate, setForceUpdate] = useState(true);
+const Cart = ({ cart, setCart, loggedIn }) => {
   const token = localStorage.getItem("token");
   let total = 0.0;
 
@@ -44,7 +43,11 @@ const Cart = ({ cart, setCart }) => {
         <button
           className="CheckoutBtn"
           onClick={() => {
-            checkout();
+            if (loggedIn) {
+              checkout();
+            } else {
+              alert("Please log in or register to checkout");
+            }
           }}
         >
           Checkout
