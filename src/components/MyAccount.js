@@ -36,37 +36,40 @@ const MyAccount = ({ user, setUser }) => {
   };
   console.log(grabbedUsers);
   return (
-    <div>
-      <h1 className="Title">My Account: </h1>
-      {grabbedUsers ? (
-        <div>
-          <h2>Name: {grabbedUsers.name}</h2>
-          <h3>Username: {grabbedUsers.username}</h3>
-          <h3>Email: {grabbedUsers.email}</h3>
-          <h3>Admin Status: {grabbedUsers.admin.toString()}</h3>
-          <button
-            type="button"
-            onClick={(event) => {
-              event.preventDefault();
-              handleEditUser(
-                grabbedUsers.id,
-                grabbedUsers.name,
-                grabbedUsers.email
-              );
-            }}
-          >
-            Edit
-          </button>
-        </div>
-      ) : (
-        ""
-      )}
-      {/* <div>
+    <div className="my-account-container">
+      <div className="my-account">
+        <h1 className="Title account-title">My Account: </h1>
+        {grabbedUsers ? (
+          <div>
+            <h2>Name: {grabbedUsers.name}</h2>
+            <h3>Username: {grabbedUsers.username}</h3>
+            <h3>Email: {grabbedUsers.email}</h3>
+            <h3>Admin Status: {grabbedUsers.admin.toString()}</h3>
+            <button
+              className="edit-my-account-button"
+              type="button"
+              onClick={(event) => {
+                event.preventDefault();
+                handleEditUser(
+                  grabbedUsers.id,
+                  grabbedUsers.name,
+                  grabbedUsers.email
+                );
+              }}
+            >
+              Edit
+            </button>
+          </div>
+        ) : (
+          ""
+        )}
+        {/* <div>
         <h2>Name: {grabbedUsers.name}</h2>
         <h3>Username: {grabbedUsers.username}</h3>
         <h3>Email: {grabbedUsers.email}</h3>
         <h3>Admin Status: {grabbedUsers.admin.toString()}</h3>
       </div> */}
+      </div>
     </div>
   );
 };
