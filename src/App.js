@@ -150,7 +150,13 @@ const App = () => {
             </Link>
           ) : null}
           {admin && (
-            <Link className="userButtons" to="/edit-products">
+            <Link
+              className="userButtons"
+              to="/edit-products"
+              onClick={() => {
+                onLinkClick();
+              }}
+            >
               Edit Products
             </Link>
           )}
