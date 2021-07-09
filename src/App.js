@@ -16,6 +16,7 @@ import {
   OrderSuccess,
   OrderHistory,
   AllOrders,
+  EditProducts,
 } from "./components";
 import { clearToken, clearAdmin } from "./api";
 import { Egg } from "./Img";
@@ -95,6 +96,11 @@ const App = () => {
               Create Product
             </Link>
           ) : null}
+          {admin && (
+            <Link className="userButtons" to="/edit-products">
+              Edit Products
+            </Link>
+          )}
           {admin ? (
             <Link className="userButtons" to="/users">
               View Users
@@ -143,7 +149,7 @@ const App = () => {
         <main>
           <Switch>
             <Route exact path="/">
-              <Product cart={cart} setCart={setCart} />
+              <Product cart={cart} setCart={setCart} loggedIn={loggedIn} />
             </Route>
             <Route exact path="/cart">
               <Cart cart={cart} setCart={setCart} loggedIn={loggedIn} />
@@ -162,6 +168,9 @@ const App = () => {
             </Route>
             <Route exact path="/create-product">
               <CreateProduct />
+            </Route>
+            <Route exact path="/edit-products">
+              <EditProducts />
             </Route>
             <Route path="/login">
               <Login

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import { createUserOrder, createGuestOrder } from "../../api";
+import { createUserOrder } from "../../api";
 
-const OrderSuccess = ({ setCart, cart }) => {
+const OrderSuccess = ({ setCart }) => {
   useEffect(() => {
     async function createOrder() {
       const token = localStorage.getItem("token");
