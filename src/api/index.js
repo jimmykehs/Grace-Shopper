@@ -65,7 +65,6 @@ export async function userRegister(name, email, username, password) {
       password,
     });
     if (data.token) {
-      // alert("You have successfully registered!");
       setToken(data.token);
     }
     return data;
@@ -79,10 +78,6 @@ export async function changeAdmin(id, admin) {
     let updatedInfo = {
       admin,
     };
-    // let adminStatus = prompt(
-    //   "What would you like to change the admin status to?",
-    //   admin
-    // );
 
     const { data } = await axios.patch(`/api/users/${id}`, updatedInfo);
     console.log(data);
