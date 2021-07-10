@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { updateProduct } from "../../api";
 
 const EditProductCard = ({ product }) => {
-  console.log(product);
   const [name, setName] = useState(product.name);
   const [description, setDescription] = useState(product.description);
   const [price, setPrice] = useState(product.price);
@@ -11,7 +10,11 @@ const EditProductCard = ({ product }) => {
 
   return (
     <div className="EditProductCard">
-      <img className="productImage" src={image_url} />
+      <img
+        className="productImage"
+        src={image_url}
+        alt="Broken computer part"
+      />
       <form
         onSubmit={async (e) => {
           e.preventDefault();
@@ -53,6 +56,13 @@ const EditProductCard = ({ product }) => {
           type="number"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
+        ></input>
+        <label htmlFor="Image_Url">Image URL</label>
+        <input
+          name="Image_Url"
+          type="url"
+          value={image_url}
+          onChange={(e) => setImage_Url(e.target.value)}
         ></input>
 
         <div className="inStock-Container">
