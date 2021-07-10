@@ -189,11 +189,11 @@ export async function editUser(id, name, email) {
   }
 }
 
-export async function getMyAccount(username) {
+export async function getMyAccount(token) {
   try {
-    let myUsername = { username };
-    console.log(myUsername);
-    const { data } = await axios.post("/api/users/me", myUsername);
+    const { data } = await axios.get("/api/users/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     console.log(data);
     console.log(data.user);
     return data.user;
@@ -234,10 +234,23 @@ export async function createUserOrder(token) {
 }
 
 export async function getAllUserOrders(token) {
-  const order = await axios.get("/api/order", {
+  const { data } = await axios.get("/api/order", {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return order;
+  const orders = [];
+  data.forEach((el, index) => {
+    if (orders.some((order) => order.id === el.id)) {
+      const orderIndx = orders.findIndex((e) => e.id === el.id);
+      orders[orderIndx].products.push(el);
+    } else {
+      orders.push({
+        id: el.id,
+        status: el.status,
+        products: [{ name: el.name, quantity: el.quantity }],
+      });
+    }
+  });
+  return orders;
 }
 
 export async function updateOrderStatus(order_id, status) {

@@ -69,6 +69,9 @@ const App = () => {
           onOpen={() => {
             setIsOpen(true);
           }}
+          onClose={() => {
+            setIsOpen(false);
+          }}
           right
         >
           <h1>User Options:</h1>

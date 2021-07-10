@@ -144,10 +144,9 @@ usersRouter.patch("/me/:id", async (req, res, next) => {
   }
 });
 
-usersRouter.post("/me", async (req, res, next) => {
-  const { username } = req.body;
+usersRouter.get("/me", requireUser, async (req, res, next) => {
   try {
-    const user = await getUserByUsername(username);
+    const user = await getUserByUsername(req.user.username);
 
     res.send({
       message: "My account grabbed",
