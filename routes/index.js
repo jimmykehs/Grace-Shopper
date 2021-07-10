@@ -30,7 +30,7 @@ apiRouter.use(async (req, res, next) => {
   } else {
     next({
       name: "HeaderError",
-      message: "Authorization header error",
+      message: `Authorization header error must start with "Bearer" `,
     });
   }
 });

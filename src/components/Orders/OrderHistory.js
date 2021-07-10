@@ -7,7 +7,7 @@ const OrderHistory = () => {
   useEffect(() => {
     async function getOrders() {
       const token = localStorage.getItem("token");
-      const { data } = await getAllUserOrders(token);
+      const data = await getAllUserOrders(token);
       console.log(data);
       setOrders(data);
     }
@@ -18,7 +18,27 @@ const OrderHistory = () => {
     <>
       <h1 className="Title">Order History</h1>
       <div id="All-Orders">
-        {orders.map((item, index) => {
+        {orders.map((item) => {
+          const { id, status, products } = item;
+          return (
+            <>
+              <div className="order">
+                <h1>
+                  Order ID: {id} ---- Status: {status}
+                </h1>
+                {products.map((product) => {
+                  const { name, quantity } = product;
+                  return (
+                    <p>
+                      {name} x {quantity}
+                    </p>
+                  );
+                })}
+              </div>
+            </>
+          );
+        })}
+        {/* {orders.map((item, index) => {
           const { id, name, quantity, status } = item;
           let newDiv = document.getElementById(item.id);
           if (newDiv === null) {
@@ -38,7 +58,7 @@ const OrderHistory = () => {
           itemNameEl.appendChild(itemName);
 
           document.getElementById(id).appendChild(itemNameEl);
-        })}
+        })} */}
       </div>
     </>
   );

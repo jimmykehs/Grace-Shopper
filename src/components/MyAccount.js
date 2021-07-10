@@ -12,7 +12,8 @@ const MyAccount = ({ user, setUser }) => {
 
   const getMyInfo = async () => {
     try {
-      const users = await getMyAccount(user);
+      const token = localStorage.getItem("token");
+      const users = await getMyAccount(token);
       setGrabbedUsers(users);
     } catch (error) {
       console.error(error);
@@ -21,7 +22,7 @@ const MyAccount = ({ user, setUser }) => {
 
   useEffect(() => {
     getMyInfo();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("user", user);
