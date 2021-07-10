@@ -3,7 +3,6 @@ import { addItemToCart } from "../../api";
 import { AddtoCart } from "../../Img";
 
 const ProductCard = ({ index, product, cart }) => {
-  console.log(product);
   const { name, description, price, image_url, in_stock } = product;
   const token = localStorage.getItem("token");
   const handleAddtoCart = async () => {

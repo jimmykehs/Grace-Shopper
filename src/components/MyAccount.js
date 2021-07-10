@@ -30,12 +30,11 @@ const MyAccount = ({ user, setUser }) => {
 
   const handleEditUser = async (id, name, email) => {
     try {
-      const routines = await editUser(id, name, email);
+      await editUser(id, name, email);
     } catch (error) {
       console.error(error);
     }
   };
-  console.log(grabbedUsers);
   return (
     <div className="my-account-container">
       <div className="my-account">
@@ -64,12 +63,6 @@ const MyAccount = ({ user, setUser }) => {
         ) : (
           ""
         )}
-        {/* <div>
-        <h2>Name: {grabbedUsers.name}</h2>
-        <h3>Username: {grabbedUsers.username}</h3>
-        <h3>Email: {grabbedUsers.email}</h3>
-        <h3>Admin Status: {grabbedUsers.admin.toString()}</h3>
-      </div> */}
       </div>
     </div>
   );
