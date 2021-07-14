@@ -12,7 +12,6 @@ const CartItem = ({ index, token, item, cart, setCart }) => {
       setItemQuantity(ItemQuantity);
     } else {
       setItemQuantity(value);
-      console.log(id);
     }
   };
   const handleProductRemove = async () => {

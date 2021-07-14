@@ -32,7 +32,6 @@ export async function getProducts() {
 export async function getUsers() {
   try {
     const { data } = await axios.get("/api/users");
-    console.log(data.users);
     return data.users;
   } catch (error) {
     throw error;
@@ -85,7 +84,6 @@ export async function changeAdmin(id, admin) {
     // );
 
     const { data } = await axios.patch(`/api/users/${id}`, updatedInfo);
-    console.log(data);
     return data;
   } catch (error) {
     throw error;
@@ -115,7 +113,6 @@ export async function getCart(token) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(data);
     return data;
   } catch (error) {
     console.error("Error getting cart");
@@ -182,7 +179,6 @@ export async function editUser(id, name, email) {
     }
 
     const { data } = await axios.patch(`/api/users/me/${id}`, updatedInfo);
-    console.log(data);
     return data;
   } catch (error) {
     throw error;
@@ -194,8 +190,6 @@ export async function getMyAccount(token) {
     const { data } = await axios.get("/api/users/me", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log(data);
-    console.log(data.user);
     return data.user;
   } catch (error) {
     throw error;
@@ -223,64 +217,87 @@ export async function removeUser(id, token) {
 }
 
 export async function createUserOrder(token) {
-  const order = await axios.post(
-    "/api/order",
-    {},
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
-  return order;
+  try {
+    const order = await axios.post(
+      "/api/order",
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return order;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 export async function getAllUserOrders(token) {
-  const { data } = await axios.get("/api/order", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  const orders = [];
-  data.forEach((el, index) => {
-    if (orders.some((order) => order.id === el.id)) {
-      const orderIndx = orders.findIndex((e) => e.id === el.id);
-      orders[orderIndx].products.push(el);
-    } else {
-      orders.push({
-        id: el.id,
-        status: el.status,
-        products: [{ name: el.name, quantity: el.quantity }],
-      });
-    }
-  });
-  return orders;
+  try {
+    const { data } = await axios.get("/api/order", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const orders = [];
+    data.forEach((el, index) => {
+      if (orders.some((order) => order.id === el.id)) {
+        const orderIndx = orders.findIndex((e) => e.id === el.id);
+        orders[orderIndx].products.push(el);
+      } else {
+        orders.push({
+          id: el.id,
+          status: el.status,
+          products: [{ name: el.name, quantity: el.quantity }],
+        });
+      }
+    });
+    return orders;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 export async function updateOrderStatus(order_id, status) {
-  const updatedOrder = await axios.patch(`/api/order/${order_id}`, { status });
-  return updatedOrder;
+  try {
+    const updatedOrder = await axios.patch(`/api/order/${order_id}`, {
+      status,
+    });
+    return updatedOrder;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 export async function getAllOrders() {
-  const { data } = await axios.get("api/order/all");
-  const orders = [];
-  data.forEach((el, index) => {
-    if (orders.some((order) => order.id === el.id)) {
-      const orderIndx = orders.findIndex((e) => e.id === el.id);
-      orders[orderIndx].products.push(el);
-    } else {
-      orders.push({
-        id: el.id,
-        status: el.status,
-        products: [{ name: el.name, quantity: el.quantity }],
-      });
-    }
-  });
-  return orders;
+  try {
+    const { data } = await axios.get("api/order/all");
+    const orders = [];
+    data.forEach((el, index) => {
+      if (orders.some((order) => order.id === el.id)) {
+        const orderIndx = orders.findIndex((e) => e.id === el.id);
+        orders[orderIndx].products.push(el);
+      } else {
+        orders.push({
+          id: el.id,
+          status: el.status,
+          products: [{ name: el.name, quantity: el.quantity }],
+        });
+      }
+    });
+    return orders;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 export async function updateProduct(product_id, fields, token) {
-  const updatedProduct = await axios.patch(
-    `api/products/${product_id}`,
-    fields,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-  return updatedProduct;
+  try {
+    const updatedProduct = await axios.patch(
+      `api/products/${product_id}`,
+      fields,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    alert("Product has been updated!");
+    return updatedProduct;
+  } catch (error) {
+    console.error(error);
+  }
 }

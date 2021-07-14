@@ -43,7 +43,6 @@ orderRouter.patch("/:id", async (req, res, next) => {
 orderRouter.get("/all", async (req, res, next) => {
   try {
     const data = await getAllOrders();
-    console.log(data);
     res.send(data);
   } catch (error) {
     next({ name: "OrderErr", message: "Could not get all orders" });
