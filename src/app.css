@@ -114,7 +114,8 @@ Note: Beware of modifying this element as it can break the animations - you shou
 
 /* General sidebar styles */
 .bm-menu {
-  background: gray;
+  background: #eee;
+  border-left: 3px solid black;
   padding: 2.5em 1.5em 0;
   font-size: 1.15em;
 }
@@ -172,4 +173,8 @@ Note: Beware of modifying this element as it can break the animations - you shou
 .edit-my-account-button:hover {
   background-color: rgb(63, 63, 63);
   color: white;
+}
+
+.bm-menu h1 {
+  color: black;
 }

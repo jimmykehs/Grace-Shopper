@@ -8,7 +8,6 @@ const OrderHistory = () => {
     async function getOrders() {
       const token = localStorage.getItem("token");
       const data = await getAllUserOrders(token);
-      console.log(data);
       setOrders(data);
     }
     getOrders();

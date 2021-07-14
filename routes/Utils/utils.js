@@ -1,5 +1,4 @@
 function requireAdmin(req, res, next) {
-  console.log("REQ.USER", req.user);
   if (!req.user || !req.user.admin) {
     next({
       name: "Unauthorized",

@@ -47,6 +47,11 @@ textarea,
   font-size: 16px;
 }
 
+.EditProductCard button:hover {
+  background: #3f3f3f;
+  color: white;
+}
+
 .productImage {
   object-fit: scale-down;
   max-height: 300px;
