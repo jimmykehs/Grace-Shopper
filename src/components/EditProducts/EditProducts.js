@@ -22,8 +22,16 @@ const EditProducts = () => {
     <>
       <h1 className="Title">Edit Products</h1>
       <div className="EditProductCard-Container">
-        {grabbedProducts.map((product) => {
-          return <EditProductCard product={product} key={product.id} />;
+        {grabbedProducts.map((product, index) => {
+          return (
+            <EditProductCard
+              product={product}
+              key={product.id}
+              index={index}
+              setGrabbedProducts={setGrabbedProducts}
+              grabbedProducts={grabbedProducts}
+            />
+          );
         })}
       </div>
     </>

@@ -17,8 +17,8 @@ async function createProduct({
   price,
   image_url,
   type,
-  in_stock,
-  inventory,
+  in_stock = true,
+  inventory = 0,
 }) {
   try {
     const {
@@ -43,6 +43,7 @@ async function createProduct({
     return products;
   } catch (err) {
     console.error("Could not create products in db/index.js @ createProduct()");
+    console.log(err);
     throw err;
   }
 }
@@ -270,6 +271,15 @@ async function deleteUser(id) {
     [id]
   );
   return user;
+}
+
+async function deleteProduct(id) {
+  const {
+    rows: [product],
+  } = await client.query(`DELETE FROM products WHERE id = $1 RETURNING *;`, [
+    id,
+  ]);
+  return product;
 }
 
 // USER ADDRESS
@@ -754,5 +764,6 @@ module.exports = {
   deleteUser,
   updateOrderStatus,
   getAllOrders,
+  deleteProduct,
   // db methods
 };

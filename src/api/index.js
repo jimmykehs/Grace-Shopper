@@ -296,3 +296,14 @@ export async function updateProduct(product_id, fields, token) {
     console.error(error);
   }
 }
+
+export async function deleteProduct(id, token) {
+  try {
+    const deletedProduct = await axios.delete(`api/products/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return deletedProduct;
+  } catch (error) {
+    console.error(error);
+  }
+}

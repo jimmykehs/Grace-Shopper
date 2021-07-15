@@ -6,6 +6,7 @@ const {
   getAllProducts,
   getProductByName,
   patchProduct,
+  deleteProduct,
 } = require("../../db");
 
 //Gets all products
@@ -42,6 +43,16 @@ productsRouter.patch("/:id", requireAdmin, async (req, res, next) => {
 
     const updatedProduct = await patchProduct(id, req.body);
     res.send(updatedProduct);
+  } catch (error) {
+    next(error);
+  }
+});
+
+productsRouter.delete("/:id", requireAdmin, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const deletedProduct = await deleteProduct(id);
+    res.send(deletedProduct);
   } catch (error) {
     next(error);
   }
